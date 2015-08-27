@@ -40,11 +40,11 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
-private fun JetType.contains(inner: JetType): Boolean {
+internal fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
 }
 
-private fun DeclarationDescriptor.render(
+internal fun DeclarationDescriptor.render(
         typeParameterNameMap: Map<TypeParameterDescriptor, String>,
         fq: Boolean
 ): String = when {
@@ -53,7 +53,7 @@ private fun DeclarationDescriptor.render(
     else -> getName().asString()
 }
 
-private fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
+internal fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
     val arguments = getArguments().map { if (it.isStarProjection) "*" else it.getType().render(typeParameterNameMap, fq) }
     val typeString = getConstructor().getDeclarationDescriptor()!!.render(typeParameterNameMap, fq)
     val typeArgumentString = if (arguments.isNotEmpty()) arguments.joinToString(", ", "<", ">") else ""
@@ -61,10 +61,10 @@ private fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, St
     return "$typeString$typeArgumentString$nullifier"
 }
 
-private fun JetType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
-private fun JetType.renderLong(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, true)
+internal fun JetType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
+internal fun JetType.renderLong(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, true)
 
-private fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParameterDescriptor>, scope: JetScope): List<TypeParameterDescriptor> {
+internal fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParameterDescriptor>, scope: JetScope): List<TypeParameterDescriptor> {
     return typeParameters.filter { typeParameter ->
         val classifier = scope.getClassifier(typeParameter.name, NoLookupLocation.FROM_IDE)
         classifier == null || classifier != typeParameter
@@ -189,7 +189,7 @@ fun JetExpression.guessTypes(
     }
 }
 
-private fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetType> {
+internal fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetType> {
     val expectedTypes = SearchUtils.findAllReferences(this, getUseScope())!!.asSequence().map { ref ->
         if (ref is JetSimpleNameReference) {
             context[BindingContext.EXPECTED_EXPRESSION_TYPE, ref.expression]
@@ -215,9 +215,9 @@ private fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetTyp
 /**
  * Encapsulates a single type substitution of a <code>JetType</code> by another <code>JetType</code>.
  */
-private class JetTypeSubstitution(public val forType: JetType, public val byType: JetType)
+internal class JetTypeSubstitution(public val forType: JetType, public val byType: JetType)
 
-private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Variance): JetType {
+internal fun JetType.substitute(substitution: JetTypeSubstitution, variance: Variance): JetType {
     val nullable = isMarkedNullable()
     val currentType = makeNotNullable()
 
@@ -253,7 +253,7 @@ fun JetCallExpression.getParameterInfos(): List<ParameterInfo> {
     }
 }
 
-private fun TypePredicate.getRepresentativeTypes(): Set<JetType> {
+internal fun TypePredicate.getRepresentativeTypes(): Set<JetType> {
     return when (this) {
         is SingleType -> Collections.singleton(targetType)
         is AllSubtypes -> Collections.singleton(upperBound)

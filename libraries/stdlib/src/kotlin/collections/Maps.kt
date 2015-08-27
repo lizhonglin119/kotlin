@@ -3,7 +3,7 @@ package kotlin
 import java.io.Serializable
 import java.util.*
 
-private object EmptyMap : Map<Any, Nothing>, Serializable {
+internal object EmptyMap : Map<Any, Nothing>, Serializable {
     override fun equals(other: Any?): Boolean = other is Map<*,*> && other.isEmpty()
     override fun hashCode(): Int = 0
     override fun toString(): String = "{}"
@@ -67,9 +67,9 @@ public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
  * very large sizes, allows support non-collection classes, and provides consistency for all map based class construction.
  */
 
-private val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
+internal val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
 
-private fun mapCapacity(expectedSize: Int): Int {
+internal fun mapCapacity(expectedSize: Int): Int {
     if (expectedSize < 3) {
         return expectedSize + 1
     }

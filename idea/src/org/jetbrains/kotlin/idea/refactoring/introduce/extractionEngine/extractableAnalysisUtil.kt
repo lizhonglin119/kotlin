@@ -89,24 +89,24 @@ import org.jetbrains.kotlin.utils.DFS.Neighbors
 import org.jetbrains.kotlin.utils.DFS.VisitedWithSet
 import java.util.*
 
-private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
-private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()
+internal val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
+internal val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()
 
-private fun DeclarationDescriptor.renderForMessage(): String =
+internal fun DeclarationDescriptor.renderForMessage(): String =
         IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(this)
 
-private val TYPE_RENDERER = DescriptorRenderer.FQ_NAMES_IN_TYPES.withOptions {
+internal val TYPE_RENDERER = DescriptorRenderer.FQ_NAMES_IN_TYPES.withOptions {
     typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
 }
 
-private fun JetType.renderForMessage(): String = TYPE_RENDERER.renderType(this)
+internal fun JetType.renderForMessage(): String = TYPE_RENDERER.renderType(this)
 
-private fun JetDeclaration.renderForMessage(bindingContext: BindingContext): String? =
+internal fun JetDeclaration.renderForMessage(bindingContext: BindingContext): String? =
     bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]?.renderForMessage()
 
-private fun JetType.isDefault(): Boolean = KotlinBuiltIns.isUnit(this)
+internal fun JetType.isDefault(): Boolean = KotlinBuiltIns.isUnit(this)
 
-private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingContext): Map<VariableDescriptor, List<JetExpression>> {
+internal fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingContext): Map<VariableDescriptor, List<JetExpression>> {
     val result = HashMap<VariableDescriptor, MutableList<JetExpression>>()
     for (instruction in filterIsInstance<WriteValueInstruction>()) {
         val expression = instruction.element as? JetExpression
@@ -119,7 +119,7 @@ private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingC
     return result
 }
 
-private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext: BindingContext): Set<VariableDescriptor> {
+internal fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext: BindingContext): Set<VariableDescriptor> {
     val accessedAfterwards = HashSet<VariableDescriptor>()
     val visitedInstructions = HashSet<Instruction>()
 
@@ -141,10 +141,10 @@ private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext
     return accessedAfterwards
 }
 
-private fun List<Instruction>.getExitPoints(): List<Instruction> =
+internal fun List<Instruction>.getExitPoints(): List<Instruction> =
         filter { localInstruction -> localInstruction.nextInstructions.any { it !in this } }
 
-private fun List<Instruction>.getResultTypeAndExpressions(
+internal fun List<Instruction>.getResultTypeAndExpressions(
         bindingContext: BindingContext,
         targetScope: LexicalScope?,
         options: ExtractionOptions
@@ -180,7 +180,7 @@ private fun List<Instruction>.getResultTypeAndExpressions(
     return resultType to expressions
 }
 
-private fun getCommonNonTrivialSuccessorIfAny(instructions: List<Instruction>): Instruction? {
+internal fun getCommonNonTrivialSuccessorIfAny(instructions: List<Instruction>): Instruction? {
     val singleSuccessorCheckingVisitor = object: InstructionVisitorWithResult<Boolean>() {
         var target: Instruction? = null
 
@@ -213,11 +213,11 @@ private fun getCommonNonTrivialSuccessorIfAny(instructions: List<Instruction>): 
     return singleSuccessorCheckingVisitor.target ?: instructions.firstOrNull()?.owner?.getSinkInstruction()
 }
 
-private fun JetType.isMeaningful(): Boolean {
+internal fun JetType.isMeaningful(): Boolean {
     return !KotlinBuiltIns.isUnit(this) && !KotlinBuiltIns.isNothing(this)
 }
 
-private fun ExtractionData.getLocalDeclarationsWithNonLocalUsages(
+internal fun ExtractionData.getLocalDeclarationsWithNonLocalUsages(
         pseudocode: Pseudocode,
         localInstructions: List<Instruction>,
         bindingContext: BindingContext
@@ -236,7 +236,7 @@ private fun ExtractionData.getLocalDeclarationsWithNonLocalUsages(
     return declarations.sortBy { it.getTextRange()!!.getStartOffset() }
 }
 
-private fun ExtractionData.analyzeControlFlow(
+internal fun ExtractionData.analyzeControlFlow(
         localInstructions: List<Instruction>,
         pseudocode: Pseudocode,
         module: ModuleDescriptor,
@@ -411,10 +411,10 @@ fun ExtractionData.createTemporaryDeclaration(functionText: String): JetNamedDec
     return tmpFile.findElementAt(lookupPosition)?.getNonStrictParentOfType<JetNamedDeclaration>()!!
 }
 
-private fun ExtractionData.createTemporaryCodeBlock(): JetBlockExpression =
+internal fun ExtractionData.createTemporaryCodeBlock(): JetBlockExpression =
         (createTemporaryDeclaration("fun() {\n$codeFragmentText\n}\n") as JetNamedFunction).getBodyExpression() as JetBlockExpression
 
-private fun JetType.collectReferencedTypes(processTypeArguments: Boolean): List<JetType> {
+internal fun JetType.collectReferencedTypes(processTypeArguments: Boolean): List<JetType> {
     if (!processTypeArguments) return Collections.singletonList(this)
     return DFS.dfsFromNode(
             this,
@@ -448,7 +448,7 @@ fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<J
             .filterNotNull()
 }
 
-private fun JetType.isExtractable(targetScope: LexicalScope?): Boolean {
+internal fun JetType.isExtractable(targetScope: LexicalScope?): Boolean {
     return collectReferencedTypes(true).fold(true) { extractable, typeToCheck ->
         val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         val typeParameter = parameterTypeDescriptor?.let {
@@ -459,7 +459,7 @@ private fun JetType.isExtractable(targetScope: LexicalScope?): Boolean {
     }
 }
 
-private fun JetType.processTypeIfExtractable(
+internal fun JetType.processTypeIfExtractable(
         typeParameters: MutableSet<TypeParameter>,
         nonDenotableTypes: MutableSet<JetType>,
         options: ExtractionOptions,
@@ -495,7 +495,7 @@ private fun JetType.processTypeIfExtractable(
     }
 }
 
-private class MutableParameter(
+internal class MutableParameter(
         override val argumentText: String,
         override val originalDescriptor: DeclarationDescriptor,
         override val receiverCandidate: Boolean,
@@ -578,7 +578,7 @@ private class MutableParameter(
     override fun copy(name: String, parameterType: JetType): Parameter = DelegatingParameter(this, name, parameterType)
 }
 
-private class DelegatingParameter(
+internal class DelegatingParameter(
         val original: Parameter,
         override val name: String,
         val parameterType: JetType
@@ -587,7 +587,7 @@ private class DelegatingParameter(
     override fun getParameterType(allowSpecialClassNames: Boolean) = parameterType
 }
 
-private class ParametersInfo {
+internal class ParametersInfo {
     var errorMessage: ErrorMessage? = null
     val replacementMap: MutableMap<Int, Replacement> = HashMap()
     val originalRefToParameter: MutableMap<JetSimpleNameExpression, MutableParameter> = HashMap()
@@ -596,7 +596,7 @@ private class ParametersInfo {
     val nonDenotableTypes: MutableSet<JetType> = HashSet()
 }
 
-private fun ExtractionData.inferParametersInfo(
+internal fun ExtractionData.inferParametersInfo(
         commonParent: PsiElement,
         pseudocode: Pseudocode,
         bindingContext: BindingContext,
@@ -811,7 +811,7 @@ private fun ExtractionData.inferParametersInfo(
     return info
 }
 
-private fun ExtractionData.checkDeclarationsMovingOutOfScope(
+internal fun ExtractionData.checkDeclarationsMovingOutOfScope(
         enclosingDeclaration: JetDeclaration,
         controlFlow: ControlFlow,
         bindingContext: BindingContext
@@ -838,7 +838,7 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(
     return null
 }
 
-private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<Instruction> {
+internal fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<Instruction> {
     val instructions = ArrayList<Instruction>()
     pseudocode.traverse(TraversalOrder.FORWARD) {
         if (it is JetElementInstruction && it.element.isInsideOf(originalElements)) {
@@ -945,7 +945,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     )
 }
 
-private fun ExtractionData.suggestFunctionNames(returnType: JetType): List<String> {
+internal fun ExtractionData.suggestFunctionNames(returnType: JetType): List<String> {
     val functionNames = LinkedHashSet<String>()
 
     val validator =
@@ -968,7 +968,7 @@ private fun ExtractionData.suggestFunctionNames(returnType: JetType): List<Strin
     return functionNames.toList()
 }
 
-private fun JetNamedDeclaration.getGeneratedBody() =
+internal fun JetNamedDeclaration.getGeneratedBody() =
         when (this) {
             is JetNamedFunction -> getBodyExpression()
             else -> {
@@ -1067,4 +1067,4 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
     return ExtractableCodeDescriptorWithConflicts(this, conflicts)
 }
 
-private val LOG = Logger.getInstance(javaClass<ExtractionEngine>())
+internal val LOG = Logger.getInstance(javaClass<ExtractionEngine>())

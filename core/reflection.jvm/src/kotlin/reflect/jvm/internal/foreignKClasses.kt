@@ -24,7 +24,7 @@ import kotlin.reflect.jvm.internal.pcollections.HashPMap
 // Arrays are needed because the same class can be loaded by different class loaders, which results in different Class instances.
 // This variable is not volatile intentionally: we don't care if there's a data race on it and some KClass instances will be lost.
 // We do care however about general performance on read access to it, thus no synchronization is done here whatsoever
-private var FOREIGN_K_CLASSES = HashPMap.empty<String, Any>()
+internal var FOREIGN_K_CLASSES = HashPMap.empty<String, Any>()
 
 // This function is invoked on each reflection access to Java classes, properties, etc. Performance is critical here.
 internal fun <T : Any> foreignKotlinClass(jClass: Class<T>): KClassImpl<T> {

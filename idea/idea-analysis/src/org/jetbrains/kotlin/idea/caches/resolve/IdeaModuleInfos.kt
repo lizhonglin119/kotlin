@@ -37,7 +37,7 @@ public abstract class IdeaModuleInfo : ModuleInfo {
     abstract fun contentScope(): GlobalSearchScope
 }
 
-private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, productionOnly: Boolean): List<IdeaModuleInfo> {
+internal fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, productionOnly: Boolean): List<IdeaModuleInfo> {
     fun Module.toInfos() = if (productionOnly) listOf(productionSourceInfo()) else listOf(testSourceInfo(), productionSourceInfo())
 
     return when (orderEntry) {
@@ -61,7 +61,7 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, pro
     }
 }
 
-private fun <T> Module.cached(provider: CachedValueProvider<T>): T {
+internal fun <T> Module.cached(provider: CachedValueProvider<T>): T {
     return CachedValuesManager.getManager(getProject()).getCachedValue(this, provider)
 }
 
@@ -111,7 +111,7 @@ public data class ModuleTestSourceInfo(override val module: Module) : ModuleSour
     })
 }
 
-private fun ModuleSourceInfo.isTests() = this is ModuleTestSourceInfo
+internal fun ModuleSourceInfo.isTests() = this is ModuleTestSourceInfo
 
 public fun Module.productionSourceInfo(): ModuleProductionSourceInfo = ModuleProductionSourceInfo(this)
 public fun Module.testSourceInfo(): ModuleTestSourceInfo = ModuleTestSourceInfo(this)
@@ -125,13 +125,13 @@ private abstract data class ModuleSourceScope(val module: Module) : GlobalSearch
     override fun hashCode(): Int = module.hashCode()
 }
 
-private class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(module) {
+internal class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(module) {
     val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
 
     override fun contains(file: VirtualFile) = moduleFileIndex.isInSourceContent(file) && !moduleFileIndex.isInTestSourceContent(file)
 }
 
-private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) {
+internal class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) {
     val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
 
     override fun contains(file: VirtualFile) = moduleFileIndex.isInTestSourceContent(file)
@@ -160,7 +160,7 @@ public data class LibraryInfo(val project: Project, val library: Library) : Idea
     override fun toString() = "LibraryInfo(libraryName=${library.getName()})"
 }
 
-private data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaModuleInfo() {
+internal data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaModuleInfo() {
     override val name: Name = Name.special("<sources for library ${library.getName()}>")
 
     override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
@@ -184,7 +184,7 @@ public data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo()
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
 }
 
-private object NotUnderContentRootModuleInfo : IdeaModuleInfo() {
+internal object NotUnderContentRootModuleInfo : IdeaModuleInfo() {
     override val name: Name = Name.special("<special module for files not under source root>")
 
     override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
@@ -193,12 +193,12 @@ private object NotUnderContentRootModuleInfo : IdeaModuleInfo() {
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
 }
 
-private data class LibraryWithoutSourceScope(project: Project, private val library: Library) :
+internal data class LibraryWithoutSourceScope(project: Project, private val library: Library) :
         LibraryScopeBase(project, library.getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>()) {
 }
 
 //TODO: (module refactoring) android sdk has modified scope
-private data class SdkScope(project: Project, private val sdk: Sdk) :
+internal data class SdkScope(project: Project, private val sdk: Sdk) :
         LibraryScopeBase(project, sdk.getRootProvider().getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>())
 
-private fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo
+internal fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo

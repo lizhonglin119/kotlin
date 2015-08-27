@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.sure
 import java.util.HashSet
 
-private val JAVA_LANG_CLASS_FQ_NAME: FqName = FqName("java.lang.Class")
+internal val JAVA_LANG_CLASS_FQ_NAME: FqName = FqName("java.lang.Class")
 
 class LazyJavaTypeResolver(
         private val c: LazyJavaResolverContext,
@@ -337,7 +337,7 @@ class LazyJavaTypeResolver(
 
 }
 
-private fun makeStarProjection(
+internal fun makeStarProjection(
         typeParameter: TypeParameterDescriptor,
         attr: JavaTypeAttributes
 ): TypeProjection {
@@ -418,7 +418,7 @@ fun JavaTypeAttributes.toFlexible(flexibility: JavaTypeFlexibility) =
 // ErasedUpperBound(T : G<t>) = G<*> // UpperBound(T) is a type G<t> with arguments
 // ErasedUpperBound(T : A) = A // UpperBound(T) is a type A without arguments
 // ErasedUpperBound(T : F) = UpperBound(F) // UB(T) is another type parameter F
-private fun TypeParameterDescriptor.getErasedUpperBound(
+internal fun TypeParameterDescriptor.getErasedUpperBound(
         // Calculation of `potentiallyRecursiveTypeParameter.upperBounds` may recursively depend on `this.getErasedUpperBound`
         // E.g. `class A<T extends A, F extends A>`
         // To prevent recursive calls return defaultValue() instead
@@ -448,7 +448,7 @@ private fun TypeParameterDescriptor.getErasedUpperBound(
     return defaultValue()
 }
 
-private fun JetType.replaceArgumentsWithStarProjections(): JetType {
+internal fun JetType.replaceArgumentsWithStarProjections(): JetType {
     if (constructor.parameters.isEmpty() || constructor.declarationDescriptor == null) return this
 
     // We could just create JetTypeImpl with current type constructor and star projections,
@@ -456,7 +456,7 @@ private fun JetType.replaceArgumentsWithStarProjections(): JetType {
     return TypeSubstitutor.create(ConstantStarSubstitution).substitute(this, Variance.INVARIANT)!!
 }
 
-private object ConstantStarSubstitution : TypeSubstitution() {
+internal object ConstantStarSubstitution : TypeSubstitution() {
     override fun get(key: JetType): TypeProjection? {
         // Let substitutor deal with flexibility
         if (key.isFlexible()) return null

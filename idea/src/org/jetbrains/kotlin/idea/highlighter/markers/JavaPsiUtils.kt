@@ -41,7 +41,7 @@ fun collectContainingClasses(methods: Collection<PsiMethod>): Set<PsiClass> {
     return classes
 }
 
-private fun getPsiClass(element: PsiElement?): PsiClass? {
+internal fun getPsiClass(element: PsiElement?): PsiClass? {
     return when {
         element == null -> null
         element is PsiClass -> element
@@ -51,7 +51,7 @@ private fun getPsiClass(element: PsiElement?): PsiClass? {
     }
 }
 
-private fun getPsiMethod(element: PsiElement?): PsiMethod? {
+internal fun getPsiMethod(element: PsiElement?): PsiMethod? {
     val parent = element?.getParent()
     return when {
         element == null -> null

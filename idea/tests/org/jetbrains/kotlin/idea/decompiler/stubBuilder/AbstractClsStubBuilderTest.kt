@@ -64,7 +64,7 @@ public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCa
     }
 }
 
-private fun StubElement<out PsiElement>.serializeToString(): String {
+internal fun StubElement<out PsiElement>.serializeToString(): String {
     return AbstractStubBuilderTest.serializeStubToString(this)
 }
 

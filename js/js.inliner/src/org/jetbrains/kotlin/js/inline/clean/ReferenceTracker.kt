@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.js.inline.util.IdentitySet
 
 import java.util.IdentityHashMap
 
-private class ReferenceTracker<Reference, RemoveCandidate : JsNode> {
+internal class ReferenceTracker<Reference, RemoveCandidate : JsNode> {
     private val reachable = IdentityHashMap<Reference, Boolean>()
     private val removableCandidates = IdentityHashMap<Reference, RemoveCandidate>()
     private val referenceFromTo = IdentityHashMap<Reference, MutableSet<Reference>>()

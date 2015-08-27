@@ -68,7 +68,7 @@ fun checkConflicts(project: Project,
     project.checkConflictsInteractively(conflicts, onShowConflicts, onAccept)
 }
 
-private val CALLABLE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+internal val CALLABLE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
     parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
     modifiers = emptySet()
     startFromName = false
@@ -83,12 +83,12 @@ fun DeclarationDescriptor.renderForConflicts(): String {
     }
 }
 
-private fun KotlinPullUpData.getClashingMemberInTargetClass(memberDescriptor: CallableMemberDescriptor): CallableMemberDescriptor? {
+internal fun KotlinPullUpData.getClashingMemberInTargetClass(memberDescriptor: CallableMemberDescriptor): CallableMemberDescriptor? {
     val memberInSuper = memberDescriptor.substitute(sourceToTargetClassSubstitutor) ?: return null
     return targetClassDescriptor.findCallableMemberBySignature(memberInSuper as CallableMemberDescriptor)
 }
 
-private fun KotlinPullUpData.checkClashWithSuperDeclaration(
+internal fun KotlinPullUpData.checkClashWithSuperDeclaration(
         member: JetNamedDeclaration,
         memberDescriptor: DeclarationDescriptor,
         conflicts: MultiMap<PsiElement, String>) {
@@ -101,7 +101,7 @@ private fun KotlinPullUpData.checkClashWithSuperDeclaration(
     }
 }
 
-private fun KotlinPullUpData.checkAccidentalOverrides(
+internal fun KotlinPullUpData.checkAccidentalOverrides(
         member: JetNamedDeclaration,
         memberDescriptor: DeclarationDescriptor,
         conflicts: MultiMap<PsiElement, String>) {
@@ -133,7 +133,7 @@ private fun KotlinPullUpData.checkAccidentalOverrides(
     }
 }
 
-private fun KotlinPullUpData.checkInnerClassToInterface(
+internal fun KotlinPullUpData.checkInnerClassToInterface(
         member: JetNamedDeclaration,
         memberDescriptor: DeclarationDescriptor,
         conflicts: MultiMap<PsiElement, String>) {
@@ -143,7 +143,7 @@ private fun KotlinPullUpData.checkInnerClassToInterface(
     }
 }
 
-private fun KotlinPullUpData.checkVisibility(
+internal fun KotlinPullUpData.checkVisibility(
         memberInfo: KotlinMemberInfo,
         memberDescriptor: DeclarationDescriptor,
         conflicts: MultiMap<PsiElement, String>

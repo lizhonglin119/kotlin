@@ -43,7 +43,7 @@ import java.util.HashSet
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.KotlinLightMethodForTraitFakeOverride
 
-private fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, T>, classes: Set<PsiClass>): Set<T> {
+internal fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, T>, classes: Set<PsiClass>): Set<T> {
     val overridden = HashSet<T>()
     for (aClass in classes) {
         AllOverridingMethodsSearch.search(aClass)!!.forEach(object : Processor<Pair<PsiMethod, PsiMethod>> {
@@ -121,7 +121,7 @@ public fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
             methodsUpdater)
 }
 
-private class OverridingMethodsUpdater(
+internal class OverridingMethodsUpdater(
         private val myMethod: PsiMethod,
         private val myRenderer: PsiElementListCellRenderer<out PsiElement>) :
         ListBackgroundUpdaterTask(myMethod.getProject(), "Searching for overriding methods") {

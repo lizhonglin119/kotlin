@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import java.util.HashMap
 
-private class PerFileAnalysisCache(val file: JetFile, val componentProvider: ComponentProvider) {
+internal class PerFileAnalysisCache(val file: JetFile, val componentProvider: ComponentProvider) {
     private val cache = HashMap<PsiElement, AnalysisResult>()
 
     private fun lookUp(analyzableElement: JetElement): AnalysisResult? {
@@ -108,7 +108,7 @@ private class PerFileAnalysisCache(val file: JetFile, val componentProvider: Com
     }
 }
 
-private object KotlinResolveDataProvider {
+internal object KotlinResolveDataProvider {
     private val topmostElementTypes = arrayOf<Class<out PsiElement?>?>(
             javaClass<JetNamedFunction>(),
             javaClass<JetClassInitializer>(),

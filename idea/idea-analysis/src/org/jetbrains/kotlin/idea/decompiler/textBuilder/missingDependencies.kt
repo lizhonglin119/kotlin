@@ -33,14 +33,14 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
 import org.jetbrains.kotlin.utils.Printer
 
-private class PackageFragmentWithMissingDependencies(override val fqName: FqName, moduleDescriptor: ModuleDescriptor) :
+internal class PackageFragmentWithMissingDependencies(override val fqName: FqName, moduleDescriptor: ModuleDescriptor) :
         PackageFragmentDescriptorImpl(moduleDescriptor, fqName) {
     override fun getMemberScope(): JetScope {
         return ScopeWithMissingDependencies(fqName, this)
     }
 }
 
-private class ScopeWithMissingDependencies(val fqName: FqName, val containing: DeclarationDescriptor) : JetScopeImpl() {
+internal class ScopeWithMissingDependencies(val fqName: FqName, val containing: DeclarationDescriptor) : JetScopeImpl() {
     override fun getContainingDeclaration(): DeclarationDescriptor {
         return containing
     }
@@ -54,7 +54,7 @@ private class ScopeWithMissingDependencies(val fqName: FqName, val containing: D
     }
 }
 
-private class PackageFragmentProviderForMissingDependencies(val moduleDescriptor: ModuleDescriptor) : PackageFragmentProvider {
+internal class PackageFragmentProviderForMissingDependencies(val moduleDescriptor: ModuleDescriptor) : PackageFragmentProvider {
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
         return listOf(PackageFragmentWithMissingDependencies(fqName, moduleDescriptor))
     }
@@ -63,7 +63,7 @@ private class PackageFragmentProviderForMissingDependencies(val moduleDescriptor
     }
 }
 
-private class MissingDependencyErrorClassDescriptor(
+internal class MissingDependencyErrorClassDescriptor(
         containing: DeclarationDescriptor,
         override val fullFqName: FqName
 ) : MissingDependencyErrorClass, ClassDescriptorImpl(containing, fullFqName.shortName(), Modality.OPEN, listOf(), SourceElement.NO_SOURCE) {

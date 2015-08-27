@@ -3,7 +3,7 @@ package kotlin
 import java.io.Serializable
 import java.util.*
 
-private object EmptyIterator : ListIterator<Nothing> {
+internal object EmptyIterator : ListIterator<Nothing> {
     override fun hasNext(): Boolean = false
     override fun hasPrevious(): Boolean = false
     override fun nextIndex(): Int = 0
@@ -12,7 +12,7 @@ private object EmptyIterator : ListIterator<Nothing> {
     override fun previous(): Nothing = throw NoSuchElementException()
 }
 
-private object EmptyList : List<Nothing>, Serializable {
+internal object EmptyList : List<Nothing>, Serializable {
     override fun equals(other: Any?): Boolean = other is List<*> && other.isEmpty()
     override fun hashCode(): Int = 1
     override fun toString(): String = "[]"
@@ -41,7 +41,7 @@ private object EmptyList : List<Nothing>, Serializable {
     private fun readResolve(): Any = EmptyList
 }
 
-private object EmptySet : Set<Nothing>, Serializable {
+internal object EmptySet : Set<Nothing>, Serializable {
     override fun equals(other: Any?): Boolean = other is Set<*> && other.isEmpty()
     override fun hashCode(): Int = 0
     override fun toString(): String = "[]"
@@ -135,10 +135,10 @@ public fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection
 public fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) size() else default
 
 /** Returns true when it's safe to convert this collection to a set without changing contains method behavior. */
-private fun <T> Collection<T>.safeToConvertToSet() = size() > 2 && this is ArrayList
+internal fun <T> Collection<T>.safeToConvertToSet() = size() > 2 && this is ArrayList
 
 /** Converts this collection to a set, when it's worth so and it doesn't change contains method behavior. */
-private fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>): Collection<T> =
+internal fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>): Collection<T> =
         when(this) {
             is Set -> this
             is Collection ->
@@ -150,7 +150,7 @@ private fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>)
         }
 
 /** Converts this collection to a set, when it's worth so and it doesn't change contains method behavior. */
-private fun <T> Iterable<T>.convertToSetForSetOperation(): Collection<T> =
+internal fun <T> Iterable<T>.convertToSetForSetOperation(): Collection<T> =
         when(this) {
             is Set -> this
             is Collection -> if (this.safeToConvertToSet()) toHashSet() else this
@@ -255,7 +255,7 @@ public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size(), c
  * Checks that `from` and `to` are in
  * the range of [0..size] and throws an appropriate exception, if they aren't.
  */
-private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
+internal fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
     when {
         fromIndex > toIndex -> throw IllegalArgumentException("fromIndex ($fromIndex) is greater than toIndex ($toIndex)")
         fromIndex < 0 -> throw IndexOutOfBoundsException("fromIndex ($fromIndex) is less than zero.")

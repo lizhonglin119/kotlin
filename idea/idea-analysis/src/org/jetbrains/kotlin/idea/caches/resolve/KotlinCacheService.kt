@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.keysToMap
 
-private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
+internal val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
 public class KotlinCacheService(val project: Project) {
     companion object {
@@ -185,7 +185,7 @@ public class KotlinCacheService(val project: Project) {
     }
 }
 
-private fun globalResolveSessionProvider(
+internal fun globalResolveSessionProvider(
         project: Project,
         platform: TargetPlatform,
         dependencies: Collection<Any>,

@@ -44,7 +44,7 @@ fun createCallableStub(
     }
 }
 
-private fun shouldSkip(callableProto: ProtoBuf.Callable, nameResolver: NameResolver): Boolean {
+internal fun shouldSkip(callableProto: ProtoBuf.Callable, nameResolver: NameResolver): Boolean {
     val memberKind = Flags.MEMBER_KIND[callableProto.getFlags()]
     return when (memberKind) {
         MemberKind.FAKE_OVERRIDE, MemberKind.DELEGATION -> true
@@ -54,7 +54,7 @@ private fun shouldSkip(callableProto: ProtoBuf.Callable, nameResolver: NameResol
     }
 }
 
-private class CallableClsStubBuilder(
+internal class CallableClsStubBuilder(
         private val parent: StubElement<out PsiElement>,
         private val callableProto: ProtoBuf.Callable,
         outerContext: ClsStubBuilderContext,

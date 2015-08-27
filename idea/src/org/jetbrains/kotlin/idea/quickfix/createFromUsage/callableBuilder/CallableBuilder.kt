@@ -76,9 +76,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 import kotlin.properties.Delegates
 
-private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
-private val TEMPLATE_FROM_USAGE_SECONDARY_CONSTRUCTOR_BODY = "New Kotlin Secondary Constructor Body.kt"
-private val ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME"
+internal val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
+internal val TEMPLATE_FROM_USAGE_SECONDARY_CONSTRUCTOR_BODY = "New Kotlin Secondary Constructor Body.kt"
+internal val ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME"
 
 /**
  * Represents a single choice for a type (e.g. parameter type or return type).
@@ -1068,7 +1068,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     }
 }
 
-private fun JetNamedDeclaration.getReturnTypeReference(): JetTypeReference? {
+internal fun JetNamedDeclaration.getReturnTypeReference(): JetTypeReference? {
     return when (this) {
         is JetCallableDeclaration -> getTypeReference()
         is JetClassOrObject -> getDelegationSpecifiers().firstOrNull()?.getTypeReference()
