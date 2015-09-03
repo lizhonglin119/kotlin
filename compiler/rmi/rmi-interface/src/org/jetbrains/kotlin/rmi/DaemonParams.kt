@@ -299,6 +299,7 @@ public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits
 
     System.getProperty(COMPILE_DAEMON_REPORT_PERF_PROPERTY)?.let { opts.jvmParams.add("D" + COMPILE_DAEMON_REPORT_PERF_PROPERTY) }
     System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)?.let { opts.jvmParams.add("D" + COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) }
+    System.getProperty("kotlin.environment.keepalive")?.let { opts.jvmParams.add("Dkotlin.environment.keepalive=true") }
     return opts
 }
 
