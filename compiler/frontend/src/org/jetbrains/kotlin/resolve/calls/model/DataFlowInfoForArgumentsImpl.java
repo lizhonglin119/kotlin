@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.Call;
+import org.jetbrains.kotlin.psi.JetCallableReferenceExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 
@@ -40,6 +41,7 @@ public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArgum
     }
 
     private void initNextArgMap(@NotNull List<? extends ValueArgument> valueArguments) {
+        // TODO: check whether it's possible to get rid of these nasty next arguments ???
         Iterator<? extends ValueArgument> iterator = valueArguments.iterator();
         ValueArgument prev = null;
         while (iterator.hasNext()) {
@@ -68,21 +70,25 @@ public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArgum
         if (infoForArgument == null) {
             return initialInfo;
         }
-        return initialInfo.and(infoForArgument);
+        return infoForArgument;
     }
 
     @Override
     public void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo) {
+        // TODO: why we have empty data flow info for JetCallableReferenceExpression, see localFunBetween.kt ???
+        DataFlowInfo nextArgumentFlowInfo =
+                valueArgument.getArgumentExpression() instanceof JetCallableReferenceExpression
+                ? dataFlowInfo.and(initialInfo) : dataFlowInfo;
         ValueArgument next = nextArgument == null ? null : nextArgument.get(valueArgument);
         if (next != null) {
             if (infoMap == null) {
                 infoMap = new HashMap<ValueArgument, DataFlowInfo>();
             }
-            infoMap.put(next, dataFlowInfo);
+            infoMap.put(next, nextArgumentFlowInfo);
             return;
         }
         //TODO assert resultInfo == null
-        resultInfo = dataFlowInfo;
+        resultInfo = nextArgumentFlowInfo;
     }
 
     @NotNull
@@ -90,6 +96,6 @@ public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArgum
     public DataFlowInfo getResultInfo() {
         assert initialInfo != null : "Initial data flow info was not set for call: " + call;
         if (resultInfo == null) return initialInfo;
-        return initialInfo.and(resultInfo);
+        return resultInfo;
     }
 }

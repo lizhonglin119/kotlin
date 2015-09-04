@@ -146,16 +146,18 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         val functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
 
         val functionDescriptor = createFunctionLiteralDescriptor(expression, context)
-        val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
-        functionDescriptor.setReturnType(safeReturnType)
+        val safeReturnTypeInfo = computeReturnTypeInfo(expression, context, functionDescriptor, functionTypeExpected)
+        functionDescriptor.setReturnType(safeReturnTypeInfo.type!!)
+        val mergedTypeInfo = safeReturnTypeInfo.replaceDataFlowInfo(safeReturnTypeInfo.dataFlowInfo.or(context.dataFlowInfo))
 
         val resultType = createFunctionType(functionDescriptor)!!
+        val resultTypeInfo = mergedTypeInfo.replaceType(resultType)
         if (functionTypeExpected) {
             // all checks were done before
-            return createTypeInfo(resultType, context)
+            return resultTypeInfo
         }
 
-        return components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, expression)
+        return components.dataFlowAnalyzer.checkType(resultTypeInfo, expression, context)
     }
 
     private fun createFunctionLiteralDescriptor(
@@ -178,29 +180,29 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         return functionDescriptor
     }
 
-    private fun computeReturnType(
+    private fun computeReturnTypeInfo(
             expression: JetFunctionLiteralExpression,
             context: ExpressionTypingContext,
             functionDescriptor: SimpleFunctionDescriptorImpl,
             functionTypeExpected: Boolean
-    ): JetType {
+    ): JetTypeInfo {
         val expectedReturnType = if (functionTypeExpected) KotlinBuiltIns.getReturnTypeFromFunctionType(context.expectedType) else null
-        val returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType);
+        val returnTypeInfo = computeUnsafeReturnTypeInfo(expression, context, functionDescriptor, expectedReturnType);
 
         if (!expression.getFunctionLiteral().hasDeclaredReturnType() && functionTypeExpected) {
             if (!TypeUtils.noExpectedType(expectedReturnType!!) && KotlinBuiltIns.isUnit(expectedReturnType)) {
-                return components.builtIns.getUnitType()
+                return returnTypeInfo.replaceType(components.builtIns.getUnitType())
             }
         }
-        return returnType ?: CANT_INFER_FUNCTION_PARAM_TYPE
+        return if (returnTypeInfo.type != null) returnTypeInfo else returnTypeInfo.replaceType(CANT_INFER_FUNCTION_PARAM_TYPE)
     }
 
-    private fun computeUnsafeReturnType(
+    private fun computeUnsafeReturnTypeInfo(
             expression: JetFunctionLiteralExpression,
             context: ExpressionTypingContext,
             functionDescriptor: SimpleFunctionDescriptorImpl,
             expectedReturnType: JetType?
-    ): JetType? {
+    ): JetTypeInfo {
         val functionLiteral = expression.getFunctionLiteral()
         val declaredReturnType = functionLiteral.getTypeReference()?.let {
             val type = components.typeResolver.resolveType(context.scope, it, context.trace, true)
@@ -217,10 +219,11 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
 
         // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
         context.trace.record(EXPECTED_RETURN_TYPE, functionLiteral, expectedType)
-        val typeOfBodyExpression = // Type-check the body
-                components.expressionTypingServices.getBlockReturnedType(functionLiteral.getBodyExpression()!!, COERCION_TO_UNIT, newContext).type
+        val typeInfoOfBodyExpression = // Type-check the body
+                components.expressionTypingServices.getBlockReturnedType(functionLiteral.getBodyExpression()!!, COERCION_TO_UNIT, newContext)
 
-        return declaredReturnType ?: computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression)
+        val resultType = declaredReturnType ?: computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeInfoOfBodyExpression.type)
+        return typeInfoOfBodyExpression.replaceType(resultType)
     }
 
     private fun computeReturnTypeBasedOnReturnExpressions(

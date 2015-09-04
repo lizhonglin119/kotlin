@@ -245,13 +245,20 @@ public class CallExpressionResolver {
             DataFlowInfo resultFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
             DataFlowInfo jumpFlowInfo = resultFlowInfo;
             boolean jumpOutPossible = false;
+            JetTypeInfo lastArgTypeInfo = null;
             for (ValueArgument argument: arguments) {
                 JetTypeInfo argTypeInfo = context.trace.get(BindingContext.EXPRESSION_TYPE_INFO, argument.getArgumentExpression());
-                if (argTypeInfo != null && argTypeInfo.getJumpOutPossible()) {
-                    jumpOutPossible = true;
-                    jumpFlowInfo = argTypeInfo.getJumpFlowInfo();
-                    break;
+                if (argTypeInfo != null) {
+                    lastArgTypeInfo = argTypeInfo;
+                    if (argTypeInfo.getJumpOutPossible()) {
+                        jumpOutPossible = true;
+                        jumpFlowInfo = argTypeInfo.getJumpFlowInfo();
+                        break;
+                    }
                 }
+            }
+            if (lastArgTypeInfo != null) {
+                resultFlowInfo = resultFlowInfo.or(lastArgTypeInfo.getDataFlowInfo());
             }
             return TypeInfoFactoryPackage.createTypeInfo(type, resultFlowInfo, jumpOutPossible, jumpFlowInfo);
         }
@@ -408,13 +415,17 @@ public class CallExpressionResolver {
                 typeInfo = new JetTypeInfoInsideSafeCall(selectorReturnTypeInfo, safeCallChainInfo);
             }
             else {
-                // Here we should not take selector data flow info into account because it's only one branch, see KT-7204
-                // x?.foo(y!!) // y becomes not-nullable during argument analysis
-                // y.bar()     // ERROR: y is nullable at this point
-                // So we should just take safe call chain data flow information, e.g. foo(x!!)?.bar()?.gav()
+                // Here we should merge receiver and selector data flows. Examples:
+                // x?.foo(y!!)         // y is nullable in receiver and not-null in selector
+                // y.bar()             // ERROR: y is nullable (nullable or not-null = nullable)
+                //
+                // y = Y()
+                // x?.let { y = null } // y is not-null in receiver and null in selector
+                // y.bar()             // ERROR: y is nullable again (null or not-null = nullable)
+                // Safe call chain data flow information is used as receiver data flow info, e.g. foo(x!!)?.bar()?.gav()
                 // If it's null, we must take receiver normal info, it's a chain with length of one like foo(x!!)?.bar() and
                 // safe call chain information does not yet exist
-                typeInfo = selectorReturnTypeInfo.replaceDataFlowInfo(safeCallChainInfo);
+                typeInfo = selectorReturnTypeInfo.replaceDataFlowInfo(safeCallChainInfo.or(selectorReturnTypeInfo.getDataFlowInfo()));
             }
         }
         else {
@@ -426,9 +437,10 @@ public class CallExpressionResolver {
                 typeInfo = new JetTypeInfoInsideSafeCall(selectorReturnTypeInfo, selectorReturnTypeInfo.getDataFlowInfo());
             }
             else {
-                // Exiting call chain with safe calls -- take data flow info from the lest-most receiver
+                // Exiting call chain with safe calls --
+                // take data flow info from the lest-most receiver merging it with selector data flow info as before
                 // foo(x!!)?.bar().gav()
-                typeInfo = selectorReturnTypeInfo.replaceDataFlowInfo(safeCallChainInfo);
+                typeInfo = selectorReturnTypeInfo.replaceDataFlowInfo(safeCallChainInfo.or(selectorReturnTypeInfo.getDataFlowInfo()));
             }
         }
         if (context.contextDependency == INDEPENDENT) {
