@@ -741,6 +741,8 @@ class FilesTest {
                 File("C:\\Users\\Me\\profile.ini").resolveSibling("Documents\\important.doc").separatorsToSystem())
         assertEquals(File("C:/Users/Me/Documents/important.doc"),
                 File("C:/Users/Me/profile.ini").resolveSibling("Documents/important.doc"))
+        assertEquals(File("gav"), File("foo").resolveSibling("gav"))
+        assertEquals(File("../gav"), File("").resolveSibling("gav"))
     }
 
     test fun extension() {
