@@ -316,7 +316,8 @@ public class DataFlowValueFactory {
         if (isStableVariable(variableDescriptor, usageModule)) return DataFlowValue.Kind.STABLE_VALUE;
         boolean isLocalVar = variableDescriptor.isVar() && variableDescriptor instanceof LocalVariableDescriptor;
         if (!isLocalVar) return DataFlowValue.Kind.OTHER;
-        if (BindingContextUtils.isVarCapturedInClosure(bindingContext, variableDescriptor)) {
+        if (BindingContextUtils.isVarCapturedInClosure(bindingContext, variableDescriptor)
+            && bindingContext.get(BindingContext.NAME_CHANGED_IN_CLOSURE, variableDescriptor.getName()) == Boolean.TRUE) {
             return DataFlowValue.Kind.UNPREDICTABLE_VARIABLE;
         }
         return DataFlowValue.Kind.PREDICTABLE_VARIABLE;
