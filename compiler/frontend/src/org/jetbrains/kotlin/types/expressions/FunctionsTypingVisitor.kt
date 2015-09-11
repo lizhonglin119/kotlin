@@ -58,6 +58,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             isStatement: Boolean,
             statementScope: LexicalWritableScope? // must be not null if isStatement
     ): JetTypeInfo {
+        PreliminaryClosureVisitor.visitLocalDeclaration(function, context)
         if (!isStatement) {
             // function expression
             if (!function.getTypeParameters().isEmpty()) {
@@ -134,6 +135,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
     }
 
     override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression, context: ExpressionTypingContext): JetTypeInfo? {
+        PreliminaryClosureVisitor.visitLocalDeclaration(expression.functionLiteral, context)
         if (!expression.getFunctionLiteral().hasBody()) return null
 
         if (JetPsiUtil.isDeprecatedLambdaSyntax(expression)) {

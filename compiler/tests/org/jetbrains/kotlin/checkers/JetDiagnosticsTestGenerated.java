@@ -13443,6 +13443,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("lambdaAndArgument.kt")
+            public void testLambdaAndArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaAndArgument.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("lambdaCall.kt")
             public void testLambdaCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaCall.kt");
@@ -13452,6 +13458,30 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("lambdaCallAnnotated.kt")
             public void testLambdaCallAnnotated() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaCallAnnotated.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localClassChanges.kt")
+            public void testLocalClassChanges() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/localClassChanges.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localFunBetween.kt")
+            public void testLocalFunBetween() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/localFunBetween.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localFunChanges.kt")
+            public void testLocalFunChanges() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/localFunChanges.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localObjectChanges.kt")
+            public void testLocalObjectChanges() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/localObjectChanges.kt");
                 doTest(fileName);
             }
 
@@ -13476,6 +13506,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("thisWithLabelAsReceiverPart.kt")
             public void testThisWithLabelAsReceiverPart() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/thisWithLabelAsReceiverPart.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("varInsideLocalFun.kt")
+            public void testVarInsideLocalFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varInsideLocalFun.kt");
                 doTest(fileName);
             }
 

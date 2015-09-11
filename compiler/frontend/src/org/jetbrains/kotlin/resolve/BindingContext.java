@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -157,6 +158,7 @@ public interface BindingContext {
     WritableSlice<JetElement, Boolean> UNREACHABLE_CODE = Slices.createSimpleSetSlice();
 
     WritableSlice<VariableDescriptor, CaptureKind> CAPTURED_IN_CLOSURE = new BasicWritableSlice<VariableDescriptor, CaptureKind>(DO_NOTHING);
+    WritableSlice<Name, Boolean> NAME_CHANGED_IN_CLOSURE = Slices.createSimpleSetSlice();
 
     WritableSlice<CallableMemberDescriptor, Boolean> NEED_SYNTHETIC_ACCESSOR = new BasicWritableSlice<CallableMemberDescriptor, Boolean>(DO_NOTHING);
 

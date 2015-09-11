@@ -212,8 +212,8 @@ fun f(): String {
     if (<info>a</info> is String) {
         val <warning>i</warning>: String = <info descr="Smart cast to kotlin.String"><info descr="Wrapped into a reference object to be modified when captured in a closure">a</info></info>
         <info descr="Smart cast to kotlin.String"><info descr="Wrapped into a reference object to be modified when captured in a closure">a</info></info>.compareTo("f")
-        val <warning>f</warning>: Function0<String> = { <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'a' could have changed since the is-check">a</error> }
-        return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'a' could have changed since the is-check">a</error>
+        val <warning descr="[UNUSED_VARIABLE] Variable 'f' is never used">f</warning>: Function0<String> = { <info descr="Smart cast to kotlin.String"><info descr="Wrapped into a reference object to be modified when captured in a closure">a</info></info> }
+        return <info descr="Smart cast to kotlin.String"><info descr="Wrapped into a reference object to be modified when captured in a closure">a</info></info>
     }
     return ""
 }

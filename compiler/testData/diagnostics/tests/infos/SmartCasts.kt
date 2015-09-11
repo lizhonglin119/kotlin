@@ -206,7 +206,10 @@ fun f(): String {
         val <!UNUSED_VARIABLE!>i<!>: String = <!DEBUG_INFO_SMARTCAST!>a<!>
         <!DEBUG_INFO_SMARTCAST!>a<!>.compareTo("f")
         // Beginning from here a is captured in a closure so we have to be cautious
-        val <!UNUSED_VARIABLE!>f<!>: Function0<String> = { <!SMARTCAST_IMPOSSIBLE!>a<!> }
+        val <!UNUSED_VARIABLE!>f<!>: Function0<String> = {
+            a = 42
+            <!TYPE_MISMATCH!>a<!>
+        }
         return <!SMARTCAST_IMPOSSIBLE!>a<!>
     }
     return ""

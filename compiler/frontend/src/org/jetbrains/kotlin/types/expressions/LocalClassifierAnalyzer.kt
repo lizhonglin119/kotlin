@@ -62,6 +62,7 @@ public class LocalClassifierAnalyzer(
             containingDeclaration: DeclarationDescriptor,
             classOrObject: JetClassOrObject
     ) {
+        PreliminaryClosureVisitor.visitLocalDeclaration(classOrObject, context)
         val module = DescriptorUtils.getContainingModule(containingDeclaration)
         val moduleContext = globalContext.withProject(classOrObject.getProject()).withModule(module)
         val container = createContainerForLazyLocalClassifierAnalyzer(

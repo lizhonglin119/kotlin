@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
+import org.jetbrains.kotlin.types.expressions.PreliminaryClosureVisitor;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 
 import java.util.Collections;
@@ -258,6 +259,7 @@ public class ArgumentTypeResolver {
             @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
         if (resolveArgumentsMode == SHAPE_FUNCTION_ARGUMENTS) {
+            PreliminaryClosureVisitor.Companion.visitLocalDeclaration(functionLiteral, context);
             JetType type = getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, true);
             return TypeInfoFactoryPackage.createTypeInfo(type, context);
         }
