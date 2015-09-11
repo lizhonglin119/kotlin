@@ -13323,6 +13323,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localReturnExpression.kt")
+            public void testLocalReturnExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/localReturnExpression.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noErrorCheckForPackageLevelVal.kt")
             public void testNoErrorCheckForPackageLevelVal() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/noErrorCheckForPackageLevelVal.kt");
