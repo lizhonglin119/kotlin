@@ -18,11 +18,6 @@ fun foo() {
     bar(bar(10 + 2) + 1)
 
     oldFun2()
-
-    ff()
-    val xx = valX
-    varX = 50
-    varY = 60
 }
 
 fun unnecessarySafeCall(x: String) {

@@ -19,11 +19,6 @@ fun foo() {
     oldFun1(oldFun2(10))
 
     oldFun2()
-
-    ff()
-    val xx = valX
-    varX = 50
-    varY = 60
 }
 
 fun unnecessarySafeCall(x: String) {
