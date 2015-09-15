@@ -16,7 +16,7 @@
 
 package kotlin.jvm.internal
 
-private object DoubleCompanionObject : FloatingPointConstants<Double> {
+internal object DoubleCompanionObject : FloatingPointConstants<Double> {
     override val MIN_VALUE: Double = java.lang.Double.MIN_VALUE
     override val MAX_VALUE: Double = java.lang.Double.MAX_VALUE
     override val POSITIVE_INFINITY : Double = java.lang.Double.POSITIVE_INFINITY
@@ -24,7 +24,7 @@ private object DoubleCompanionObject : FloatingPointConstants<Double> {
     override val NaN : Double = java.lang.Double.NaN
 }
 
-private object FloatCompanionObject : FloatingPointConstants<Float> {
+internal object FloatCompanionObject : FloatingPointConstants<Float> {
     override val MIN_VALUE: Float = java.lang.Float.MIN_VALUE
     override val MAX_VALUE: Float = java.lang.Float.MAX_VALUE
     override val POSITIVE_INFINITY : Float = java.lang.Float.POSITIVE_INFINITY
@@ -32,28 +32,28 @@ private object FloatCompanionObject : FloatingPointConstants<Float> {
     override val NaN : Float = java.lang.Float.NaN
 }
 
-private object IntCompanionObject : IntegerConstants<Int> {
+internal object IntCompanionObject : IntegerConstants<Int> {
     override val MIN_VALUE: Int = java.lang.Integer.MIN_VALUE
     override val MAX_VALUE: Int = java.lang.Integer.MAX_VALUE
 }
 
-private object LongCompanionObject : IntegerConstants<Long> {
+internal object LongCompanionObject : IntegerConstants<Long> {
     override val MIN_VALUE: Long = java.lang.Long.MIN_VALUE
     override val MAX_VALUE: Long = java.lang.Long.MAX_VALUE
 }
 
-private object ShortCompanionObject : IntegerConstants<Short> {
+internal object ShortCompanionObject : IntegerConstants<Short> {
     override val MIN_VALUE: Short = java.lang.Short.MIN_VALUE
     override val MAX_VALUE: Short = java.lang.Short.MAX_VALUE
 }
 
-private object ByteCompanionObject : IntegerConstants<Byte> {
+internal object ByteCompanionObject : IntegerConstants<Byte> {
     override val MIN_VALUE: Byte = java.lang.Byte.MIN_VALUE
     override val MAX_VALUE: Byte = java.lang.Byte.MAX_VALUE
 }
 
 
-private object CharCompanionObject {}
+internal object CharCompanionObject {}
 
-private object StringCompanionObject {}
-private object EnumCompanionObject {}
+internal object StringCompanionObject {}
+internal object EnumCompanionObject {}
