@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
@@ -165,6 +166,19 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
                        EMPTY_TYPE_INFO,
                        value
                );
+    }
+
+    /**
+     * Call this function to include the given data flow value
+     * to "incoming changes" set which will prevent from smart-casting it.
+     * Helpful when you know that some mutable variable is going to change in lambda ahead.
+     *
+     * @param value
+     */
+    @Override
+    public DataFlowInfo addIncomingChangeInfo(@NotNull Name name) {
+        // TODO
+        return this;
     }
 
     @Override

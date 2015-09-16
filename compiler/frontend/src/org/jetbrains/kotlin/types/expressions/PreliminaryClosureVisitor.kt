@@ -19,20 +19,24 @@ package org.jetbrains.kotlin.types.expressions
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 
 public class PreliminaryClosureVisitor: AssignedVariablesSearcher() {
 
-    private fun registerChangedLocalVariables(context: ResolutionContext<*>) {
+    private fun registerChangedLocalVariables(context: ResolutionContext<*>): DataFlowInfo {
+        var dataFlowInfo = context.dataFlowInfo
         for (name in assignedNames) {
-            context.trace.record(BindingContext.NAME_CHANGED_IN_CLOSURE, name, true)
+            dataFlowInfo = dataFlowInfo.addIncomingChangeInfo(name)
+            //context.trace.record(BindingContext.NAME_CHANGED_IN_CLOSURE, name, true)
         }
+        return dataFlowInfo
     }
 
     companion object {
-        fun visitLocalDeclaration(declaration: JetDeclaration, context: ResolutionContext<*>) {
+        fun visitLocalDeclaration(declaration: JetDeclaration, context: ResolutionContext<*>): DataFlowInfo {
             val visitor = PreliminaryClosureVisitor()
             declaration.accept(visitor)
-            visitor.registerChangedLocalVariables(context)
+            return visitor.registerChangedLocalVariables(context)
         }
     }
 }

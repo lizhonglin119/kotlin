@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.SetMultimap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Map;
@@ -53,6 +54,13 @@ public interface DataFlowInfo {
      */
     @NotNull
     DataFlowInfo clearValueInfo(@NotNull DataFlowValue value);
+
+    /**
+     * Call this function to include the given variable name
+     * to "incoming changes" set which will prevent from smart-casting it.
+     * Helpful when you know that some mutable variable is going to change in lambda ahead.
+     */
+    DataFlowInfo addIncomingChangeInfo(@NotNull Name name);
 
     /**
      * Call this function when b is assigned to a
