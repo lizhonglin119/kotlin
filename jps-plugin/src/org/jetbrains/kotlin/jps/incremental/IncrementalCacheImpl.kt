@@ -120,26 +120,22 @@ public class IncrementalCacheImpl(
     }
 
     private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
+    private val maps = arrayListOf<BasicMap<*, *>>()
 
-    private val String.storageFile: File
-        get() = File(baseDir, this)
+    private fun <K, V, M : BasicMap<K, V>> createMap(storagePath: String, doCreateMap: (IncrementalCacheImpl, File)->M): M {
+        val map = doCreateMap(this, File(baseDir, storagePath))
+        maps.add(map)
+        return map
+    }
 
-    private val protoMap = ProtoMap(PROTO_MAP.storageFile)
-    private val constantsMap = ConstantsMap(CONSTANTS_MAP.storageFile)
-    private val inlineFunctionsMap = InlineFunctionsMap(INLINE_FUNCTIONS.storageFile)
-    private val packagePartMap = PackagePartMap(PACKAGE_PARTS.storageFile)
-    private val sourceToClassesMap = SourceToClassesMap(SOURCE_TO_CLASSES.storageFile)
-    private val dirtyOutputClassesMap = DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile)
-    private val dirtyInlineFunctionsMap = DirtyInlineFunctionsMap(DIRTY_INLINE_FUNCTIONS.storageFile)
-    private val inlinedTo = InlineFunctionsFilesMap(INLINED_TO.storageFile)
-
-    private val maps = listOf(protoMap,
-                              constantsMap,
-                              inlineFunctionsMap,
-                              packagePartMap,
-                              sourceToClassesMap,
-                              dirtyOutputClassesMap,
-                              inlinedTo)
+    private val protoMap = createMap(PROTO_MAP, ::ProtoMap)
+    private val constantsMap = createMap(CONSTANTS_MAP, ::ConstantsMap)
+    private val inlineFunctionsMap = createMap(INLINE_FUNCTIONS, ::InlineFunctionsMap)
+    private val packagePartMap = createMap(PACKAGE_PARTS, ::PackagePartMap)
+    private val sourceToClassesMap = createMap(SOURCE_TO_CLASSES, ::SourceToClassesMap)
+    private val dirtyOutputClassesMap = createMap(DIRTY_OUTPUT_CLASSES, ::DirtyOutputClassesMap)
+    private val dirtyInlineFunctionsMap = createMap(DIRTY_INLINE_FUNCTIONS, ::DirtyInlineFunctionsMap)
+    private val inlinedTo = createMap(INLINED_TO, ::InlineFunctionsFilesMap)
 
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
     private val dependents = arrayListOf<IncrementalCacheImpl>()
