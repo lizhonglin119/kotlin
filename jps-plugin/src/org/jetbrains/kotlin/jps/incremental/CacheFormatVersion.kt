@@ -49,7 +49,15 @@ class CacheFormatVersion(targetDataRoot: File) {
     }
 
     fun saveIfNeeded() {
-        if (file.parentFile.exists() && !file.exists()) {
+        synchronized(Companion) {
+            if (!file.exists()) {
+                if (!file.parentFile.exists()) {
+                    file.parentFile.mkdirs()
+                }
+
+                file.createNewFile()
+            }
+
             file.writeText("$CACHE_FORMAT_VERSION")
         }
     }
