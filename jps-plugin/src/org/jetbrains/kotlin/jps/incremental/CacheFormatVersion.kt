@@ -35,7 +35,7 @@ class CacheFormatVersion(targetDataRoot: File) {
 
     private val file = File(targetDataRoot, FORMAT_VERSION_FILE_PATH)
 
-    public fun isIncompatible(): Boolean {
+    fun isIncompatible(): Boolean {
         if (!file.exists()) return false
 
         val versionNumber = file.readText().toInt()
