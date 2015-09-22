@@ -56,20 +56,25 @@ val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
 internal val CACHE_DIRECTORY_NAME = "kotlin"
 
+@TestOnly
+public fun getCacheDirectoryName(): String =
+        CACHE_DIRECTORY_NAME
 
 public class IncrementalCacheImpl(
         targetDataRoot: File,
         private val target: ModuleBuildTarget
 ) : StorageOwner, IncrementalCache {
     companion object {
-        val PROTO_MAP = "proto.tab"
-        val CONSTANTS_MAP = "constants.tab"
-        val INLINE_FUNCTIONS = "inline-functions.tab"
-        val PACKAGE_PARTS = "package-parts.tab"
-        val SOURCE_TO_CLASSES = "source-to-classes.tab"
-        val DIRTY_OUTPUT_CLASSES = "dirty-output-classes.tab"
-        val DIRTY_INLINE_FUNCTIONS = "dirty-inline-functions.tab"
-        val INLINED_TO = "inlined-to.tab"
+        val CACHE_EXTENSION = "tab"
+
+        private val PROTO_MAP = "proto"
+        private val CONSTANTS_MAP = "constants"
+        private val INLINE_FUNCTIONS = "inline-functions"
+        private val PACKAGE_PARTS = "package-parts"
+        private val SOURCE_TO_CLASSES = "source-to-classes"
+        private val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
+        private val DIRTY_INLINE_FUNCTIONS = "dirty-inline-functions"
+        private val INLINED_TO = "inlined-to"
 
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
@@ -77,8 +82,8 @@ public class IncrementalCacheImpl(
     private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
     private val maps = arrayListOf<BasicMap<*, *>>()
 
-    private fun <K, V, M : BasicMap<K, V>> createMap(storagePath: String, doCreateMap: (IncrementalCacheImpl, File)->M): M {
-        val map = doCreateMap(this, File(baseDir, storagePath))
+    private fun <K, V, M : BasicMap<K, V>> createMap(storageName: String, doCreateMap: (IncrementalCacheImpl, File)->M): M {
+        val map = doCreateMap(this, File(baseDir, storageName + "." + CACHE_EXTENSION))
         maps.add(map)
         return map
     }
