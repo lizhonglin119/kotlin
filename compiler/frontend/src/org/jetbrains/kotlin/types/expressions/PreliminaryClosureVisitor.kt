@@ -16,15 +16,26 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import kotlin.reflect.jvm.internal.impl.incremental.components.LookupLocation
 
 public class PreliminaryClosureVisitor: AssignedVariablesSearcher() {
 
     private fun registerChangedLocalVariables(context: ResolutionContext<*>) {
         for (name in assignedNames) {
-            context.trace.record(BindingContext.NAME_CHANGED_IN_CLOSURE, name, true)
+            var currentScope: LexicalScope? = context.scope
+            while (currentScope != null) {
+                val descriptors = currentScope.getDeclaredVariables(name, NoLookupLocation.WHEN_GET_DECLARATION_SCOPE)
+                for (descriptor in descriptors) {
+                    context.trace.record(BindingContext.CHANGED_IN_CLOSURE, descriptor, true)
+                }
+                if (descriptors.isNotEmpty()) break
+                currentScope = currentScope.parent
+            }
         }
     }
 

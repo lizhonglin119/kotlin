@@ -158,7 +158,7 @@ public interface BindingContext {
     WritableSlice<JetElement, Boolean> UNREACHABLE_CODE = Slices.createSimpleSetSlice();
 
     WritableSlice<VariableDescriptor, CaptureKind> CAPTURED_IN_CLOSURE = new BasicWritableSlice<VariableDescriptor, CaptureKind>(DO_NOTHING);
-    WritableSlice<Name, Boolean> NAME_CHANGED_IN_CLOSURE = Slices.createSimpleSetSlice();
+    WritableSlice<VariableDescriptor, Boolean> CHANGED_IN_CLOSURE = Slices.createSimpleSetSlice();
 
     WritableSlice<CallableMemberDescriptor, Boolean> NEED_SYNTHETIC_ACCESSOR = new BasicWritableSlice<CallableMemberDescriptor, Boolean>(DO_NOTHING);
 
