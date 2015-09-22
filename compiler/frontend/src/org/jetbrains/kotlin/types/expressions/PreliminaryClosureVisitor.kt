@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import kotlin.reflect.jvm.internal.impl.incremental.components.LookupLocation
 
 public class PreliminaryClosureVisitor: AssignedVariablesSearcher() {
 
