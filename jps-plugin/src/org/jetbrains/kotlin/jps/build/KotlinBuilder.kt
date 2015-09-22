@@ -135,7 +135,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val dataManager = projectDescriptor.dataManager
 
-        if (IncrementalCompilation.ENABLED &&
+        if (IncrementalCompilation.isEnabled() &&
             chunk.targets.any { dataManager.dataPaths.getKotlinCacheVersion(it).isIncompatible() }
         ) {
             LOG.info("Clearing caches for " + chunk.targets.map { it.presentableName }.join())
@@ -216,7 +216,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             copyJsLibraryFilesIfNeeded(chunk, project)
         }
 
-        if (!IncrementalCompilation.ENABLED) return OK
+        if (!IncrementalCompilation.isEnabled()) return OK
 
         val caches = filesToCompile.keySet().map { incrementalCaches[it]!! }
         val marker = ChangesProcessor(context, chunk, allCompiledFiles, caches)
@@ -294,8 +294,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return compileToJs(chunk, commonArguments, environment, null, messageCollector, project)
         }
 
-        if (IncrementalCompilation.ENABLED) {
-            for (target in chunk.getTargets()) {
+        if (IncrementalCompilation.isEnabled()) {
+            for (target in chunk.targets) {
                 val cache = incrementalCaches[target]!!
                 val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map { File(it) }
                 cache.markOutputClassesDirty(removedAndDirtyFiles)
@@ -414,7 +414,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return sources
         }
 
-        if (!IncrementalCompilation.ENABLED) {
+        if (!IncrementalCompilation.isEnabled()) {
             return
         }
 
@@ -451,11 +451,11 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
             generatedFiles: List<GeneratedFile>
     ): ChangesInfo {
-        incrementalCaches.values().forEach { it.saveCacheFormatVersion() }
-
-        if (!IncrementalCompilation.ENABLED) {
+        if (!IncrementalCompilation.isEnabled()) {
             return ChangesInfo.NO_CHANGES
         }
+
+        incrementalCaches.values().forEach { it.saveCacheFormatVersion() }
 
         var changesInfo = ChangesInfo.NO_CHANGES
         for (generatedFile in generatedFiles) {
