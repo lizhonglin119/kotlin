@@ -27,17 +27,50 @@ import java.io.File
 
 public abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() {
     override fun doTest(testDataPath: String) {
-        super.doTest(testDataPath)
+        try {
+            super.doTest(testDataPath)
 
-        val actual = dumpKotlinCachesFileNames()
-        val expectedFile = File(testDataPath, "expected-kotlin-caches.txt")
+            val actual = dumpKotlinCachesFileNames()
+            val expectedFile = File(testDataPath, "expected-kotlin-caches.txt")
 
-        if (!expectedFile.exists()) {
-            FileUtil.writeToFile(expectedFile, actual)
-            throw IllegalStateException("Created file: $expectedFile")
+            if (!expectedFile.exists()) {
+                FileUtil.writeToFile(expectedFile, actual)
+                throw IllegalStateException("Created file: $expectedFile")
+            }
+
+            UsefulTestCase.assertSameLinesWithFile(expectedFile.canonicalPath, actual)
+        }
+        finally {
+            IncrementalCompilation.enableIncrementalCompilation()
+        }
+    }
+
+    override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
+        super.performAdditionalModifications(modifications)
+
+        var modified = 0
+
+        for (modification in modifications) {
+            if (!modification.path.endsWith("incremental_compilation_off")) continue
+
+            when (modification) {
+                is AbstractIncrementalJpsTest.Modification.ModifyContent -> {
+                    IncrementalCompilation.disableIncrementalCompilation()
+                }
+                is AbstractIncrementalJpsTest.Modification.DeleteFile -> {
+                    IncrementalCompilation.enableIncrementalCompilation()
+                }
+                else -> {
+                    throw IllegalStateException("Unknown modification type: ${modification.javaClass}")
+                }
+            }
+
+            modified++
         }
 
-        UsefulTestCase.assertSameLinesWithFile(expectedFile.canonicalPath, actual)
+        if (modified > 1) {
+            throw IllegalStateException("Incremental compilation was enabled/disable more than once")
+        }
     }
 
     private fun dumpKotlinCachesFileNames(): String {

@@ -185,10 +185,10 @@ public abstract class AbstractIncrementalJpsTest(
                 val fileName = file.getName()
 
                 if (fileName.endsWith(newSuffix)) {
-                    modifications.add(ModifyContent(getDirPrefix(fileName) + "/" + fileName.removeSuffix(newSuffix), file))
+                    modifications.add(Modification.ModifyContent(getDirPrefix(fileName) + "/" + fileName.removeSuffix(newSuffix), file))
                 }
                 if (fileName.endsWith(deleteSuffix)) {
-                    modifications.add(DeleteFile(getDirPrefix(fileName) + "/" + fileName.removeSuffix(deleteSuffix)))
+                    modifications.add(Modification.DeleteFile(getDirPrefix(fileName) + "/" + fileName.removeSuffix(deleteSuffix)))
                 }
             }
             return modifications
@@ -344,13 +344,13 @@ public abstract class AbstractIncrementalJpsTest(
         val modifications = getModificationsToPerform(moduleNames)
         for (step in modifications) {
             step.forEach { it.perform(workDir) }
-            performAdditionalModifications()
+            performAdditionalModifications(step)
             results.add(make())
         }
         return results
     }
 
-    protected open fun performAdditionalModifications() {
+    protected open fun performAdditionalModifications(modifications: List<Modification>) {
     }
 
     // null means one module
@@ -414,33 +414,33 @@ public abstract class AbstractIncrementalJpsTest(
         }
     }
 
-    private abstract class Modification(val path: String) {
+    protected sealed class Modification(val path: String) {
         abstract fun perform(workDir: File)
 
         override fun toString(): String = "${javaClass.simpleName} $path"
-    }
 
-    private class ModifyContent(path: String, val dataFile: File) : Modification(path) {
-        override fun perform(workDir: File) {
-            val file = File(workDir, path)
+        class ModifyContent(path: String, val dataFile: File) : Modification(path) {
+            override fun perform(workDir: File) {
+                val file = File(workDir, path)
 
-            val oldLastModified = file.lastModified()
-            file.delete()
-            dataFile.copyTo(file)
+                val oldLastModified = file.lastModified()
+                file.delete()
+                dataFile.copyTo(file)
 
-            val newLastModified = file.lastModified()
-            if (newLastModified <= oldLastModified) {
-                //Mac OS and some versions of Linux truncate timestamp to nearest second
-                file.setLastModified(oldLastModified + 1000)
+                val newLastModified = file.lastModified()
+                if (newLastModified <= oldLastModified) {
+                    //Mac OS and some versions of Linux truncate timestamp to nearest second
+                    file.setLastModified(oldLastModified + 1000)
+                }
             }
         }
-    }
 
-    private class DeleteFile(path: String) : Modification(path) {
-        override fun perform(workDir: File) {
-            val fileToDelete = File(workDir, path)
-            if (!fileToDelete.delete()) {
-                throw AssertionError("Couldn't delete $fileToDelete")
+        class DeleteFile(path: String) : Modification(path) {
+            override fun perform(workDir: File) {
+                val fileToDelete = File(workDir, path)
+                if (!fileToDelete.delete()) {
+                    throw AssertionError("Couldn't delete $fileToDelete")
+                }
             }
         }
     }
