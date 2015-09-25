@@ -47,6 +47,12 @@ public class LookupTrackerTestGenerated extends AbstractLookupTrackerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("debug")
+    public void testDebug() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/debug/");
+        doTest(fileName);
+    }
+
     @TestMetadata("localDeclarations")
     public void testLocalDeclarations() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/localDeclarations/");
