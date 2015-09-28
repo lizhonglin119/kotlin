@@ -13746,6 +13746,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("lambdaAndArgument.kt")
+            public void testLambdaAndArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaAndArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaAndArgumentFun.kt")
+            public void testLambdaAndArgumentFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaAndArgumentFun.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("lambdaCall.kt")
             public void testLambdaCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaCall.kt");
@@ -13755,6 +13767,60 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("lambdaCallAnnotated.kt")
             public void testLambdaCallAnnotated() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaCallAnnotated.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaDeclaresAndModifies.kt")
+            public void testLambdaDeclaresAndModifies() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaDeclaresAndModifies.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaDeclaresAndModifiesInLoop.kt")
+            public void testLambdaDeclaresAndModifiesInLoop() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaDeclaresAndModifiesInLoop.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaDeclaresAndModifiesInSecondary.kt")
+            public void testLambdaDeclaresAndModifiesInSecondary() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaDeclaresAndModifiesInSecondary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaDeclaresAndModifiesWithDirectEq.kt")
+            public void testLambdaDeclaresAndModifiesWithDirectEq() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaDeclaresAndModifiesWithDirectEq.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaUsesOwnerModifies.kt")
+            public void testLambdaUsesOwnerModifies() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaUsesOwnerModifies.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localClassChanges.kt")
+            public void testLocalClassChanges() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/localClassChanges.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localFunBetween.kt")
+            public void testLocalFunBetween() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/localFunBetween.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localFunChanges.kt")
+            public void testLocalFunChanges() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/localFunChanges.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localObjectChanges.kt")
+            public void testLocalObjectChanges() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/localObjectChanges.kt");
                 doTest(fileName);
             }
 
@@ -13770,6 +13836,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ownerDeclaresBothModifies.kt")
+            public void testOwnerDeclaresBothModifies() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/ownerDeclaresBothModifies.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("thisWithLabel.kt")
             public void testThisWithLabel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/thisWithLabel.kt");
@@ -13779,6 +13851,36 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("thisWithLabelAsReceiverPart.kt")
             public void testThisWithLabelAsReceiverPart() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/thisWithLabelAsReceiverPart.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("varChangedInInitializer.kt")
+            public void testVarChangedInInitializer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varChangedInInitializer.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("varInAccessor.kt")
+            public void testVarInAccessor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varInAccessor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("varInInitializer.kt")
+            public void testVarInInitializer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varInInitializer.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("varInSecondaryConstructor.kt")
+            public void testVarInSecondaryConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varInSecondaryConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("varInsideLocalFun.kt")
+            public void testVarInsideLocalFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varInsideLocalFun.kt");
                 doTest(fileName);
             }
 

@@ -310,3 +310,31 @@ public fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUt
 
 public fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
         SmartPointerManager.getInstance(getProject()).createSmartPsiElementPointer(this)
+
+public fun PsiElement.before(element: PsiElement): Boolean {
+    var depth = parents.count()
+    var elementDepth = element.parents.count()
+    var we: PsiElement? = this
+    var they: PsiElement? = element
+    while (depth != elementDepth) {
+        if (depth > elementDepth) {
+            we = we?.parent
+            depth--
+        }
+        else {
+            they = they?.parent
+            elementDepth--
+        }
+    }
+    if (we == they) return false
+    while (we?.parent != they?.parent) {
+        we = we?.parent
+        they = they?.parent
+    }
+    // We and they have common parent
+    while (we != null && we != they) {
+        we = we.nextSibling
+    }
+    // If we found they after us, then true, otherwise false
+    return we == they
+}

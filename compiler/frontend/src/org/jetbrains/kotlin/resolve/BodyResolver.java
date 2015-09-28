@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
+import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
 import org.jetbrains.kotlin.types.expressions.ValueParameterResolver;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 import org.jetbrains.kotlin.util.Box;
@@ -505,6 +506,7 @@ public class BodyResolver {
         if (!classDescriptor.getConstructors().isEmpty()) {
             JetExpression body = anonymousInitializer.getBody();
             if (body != null) {
+                PreliminaryDeclarationVisitor.Companion.visitDeclaration(anonymousInitializer, classDescriptor, trace);
                 expressionTypingServices.getType(scopeForInitializers, body, NO_EXPECTED_TYPE, outerDataFlowInfo, trace);
             }
             processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
@@ -566,6 +568,7 @@ public class BodyResolver {
     ) {
         computeDeferredType(propertyDescriptor.getReturnType());
 
+        PreliminaryDeclarationVisitor.Companion.visitDeclaration(property, propertyDescriptor, trace);
         JetExpression initializer = property.getInitializer();
         LexicalScope propertyScope = getScopeForProperty(c, property);
         if (parentScope == null) {
@@ -768,6 +771,7 @@ public class BodyResolver {
             @Nullable Function1<LexicalScope, DataFlowInfo> beforeBlockBody,
             @NotNull CallChecker callChecker
     ) {
+        PreliminaryDeclarationVisitor.Companion.visitDeclaration(function, functionDescriptor, trace);
         LexicalScope innerScope = FunctionDescriptorUtil.getFunctionInnerScope(scope, functionDescriptor, trace);
         List<JetParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
