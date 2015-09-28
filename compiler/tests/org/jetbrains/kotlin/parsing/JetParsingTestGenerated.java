@@ -43,6 +43,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi"), Pattern.compile("^(.*)\\.kts?$"), true);
         }
 
+        @TestMetadata("AnnotatedAssignment.kt")
+        public void testAnnotatedAssignment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/AnnotatedAssignment.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("AnonymousInitializer.kt")
         public void testAnonymousInitializer() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/AnonymousInitializer.kt");
