@@ -1,0 +1,4 @@
+package
+
+public val kotlin.String.bar: kotlin.Int = 13
+public val kotlin.String.foo: kotlin.Int
