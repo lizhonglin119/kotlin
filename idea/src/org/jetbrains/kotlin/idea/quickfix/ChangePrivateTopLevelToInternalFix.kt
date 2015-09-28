@@ -36,7 +36,7 @@ public class ChangePrivateTopLevelToInternalFix(element: JetModifierListOwner, p
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val descriptor = Errors.ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE.cast(diagnostic).a
+            val descriptor = Errors.INVISIBLE_FILE_MEMBER.cast(diagnostic).a
             val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? JetModifierListOwner ?: return null
             return ChangePrivateTopLevelToInternalFix(declaration, descriptor.name.asString())
         }

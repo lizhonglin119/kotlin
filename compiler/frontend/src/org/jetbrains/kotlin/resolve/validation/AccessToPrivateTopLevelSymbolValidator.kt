@@ -59,7 +59,7 @@ public class AccessToPrivateTopLevelSymbolValidator : SymbolUsageValidator {
             if (packageFqName != currentPackageViewDescriptor?.fqName) return
 
             if (jetFile != it) {
-                trace.report(Errors.ACCESS_TO_PRIVATE_TOP_LEVEL_FROM_ANOTHER_FILE.on(element, descriptor, descriptor.visibility, it))
+                trace.report(Errors.INVISIBLE_FILE_MEMBER.on(element, descriptor, descriptor.visibility, it))
             }
         }
     }
