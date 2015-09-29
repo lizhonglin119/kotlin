@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.resolve.validation
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -47,20 +45,10 @@ public class AccessToPrivateTopLevelSymbolValidator : SymbolUsageValidator {
 
         if (descriptor is PropertySetterDescriptor && descriptor.correspondingProperty.visibility == Visibilities.PRIVATE) return
 
-        if (element !is JetElement) return
+        val elementFile = element.containingFile as? JetFile ?: return
 
-        DescriptorToSourceUtils.getContainingFile(descriptor)?.let {
-            val jetFile = element.containingFile as? JetFile ?: return
-
-            val currentPackageViewDescriptor = trace.bindingContext.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, jetFile)
-            if (currentPackageViewDescriptor != null && !DescriptorUtils.areInSameModule(currentPackageViewDescriptor, descriptor)) return
-
-            val packageFqName = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java)?.fqName
-            if (packageFqName != currentPackageViewDescriptor?.fqName) return
-
-            if (jetFile != it) {
-                trace.report(Errors.INVISIBLE_FILE_MEMBER.on(element, descriptor, descriptor.visibility, it))
-            }
+        if (elementFile != DescriptorToSourceUtils.getContainingFile(descriptor)) {
+            trace.report(Errors.INVISIBLE_FILE_MEMBER.on(element, descriptor, descriptor.visibility))
         }
     }
 }

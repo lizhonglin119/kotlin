@@ -111,7 +111,7 @@ public class DefaultErrorMessages {
 
         MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, NAME);
         MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, NAME);
-        MAP.put(INVISIBLE_FILE_MEMBER, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, RENDER_FILE);
+        MAP.put(INVISIBLE_FILE_MEMBER, "Cannot access ''{0}'': it is ''{1}'' in file", NAME, TO_STRING);
 
         MAP.put(REDECLARATION, "Redeclaration: {0}", STRING);
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", STRING);
