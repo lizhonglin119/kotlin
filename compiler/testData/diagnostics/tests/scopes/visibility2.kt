@@ -28,7 +28,7 @@ fun test() {
     <!INVISIBLE_MEMBER(foo; private; file)!>foo<!>()
 
     val u : <!INVISIBLE_REFERENCE(A; private; file)!>A<!> = <!INVISIBLE_MEMBER(A; private; file)!>A<!>()
-    val a : java.util.Arrays.<!INVISIBLE_REFERENCE(ArrayList; private; ''Arrays'')!>ArrayList<!><Int>;
+    val a : java.util.Arrays.<!INVISIBLE_REFERENCE(ArrayList; private; 'Arrays')!>ArrayList<!><Int>;
 
     val po = <!INVISIBLE_MEMBER(PO; private; file)!>PO<!>
 }
