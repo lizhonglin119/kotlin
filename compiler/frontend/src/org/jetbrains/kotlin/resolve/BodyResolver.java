@@ -462,11 +462,12 @@ public class BodyResolver {
                 trace.report(SUPERTYPE_APPEARS_TWICE.on(typeReference));
             }
 
+            boolean isSealed = classDescriptor != null && classDescriptor.getModality() == Modality.SEALED;
             if (DescriptorUtils.isSingleton(classDescriptor)) {
                 trace.report(SINGLETON_IN_SUPERTYPE.on(typeReference));
             }
-            else if (constructor.isFinal() && !allowedFinalSupertypes.contains(constructor)) {
-                if (classDescriptor.getModality() == Modality.SEALED) {
+            else if ((constructor.isFinal() || isSealed) && !allowedFinalSupertypes.contains(constructor)) {
+                if (isSealed) {
                     DeclarationDescriptor containingDescriptor = supertypeOwner.getContainingDeclaration();
                     while (containingDescriptor != null && containingDescriptor != classDescriptor) {
                         containingDescriptor = containingDescriptor.getContainingDeclaration();
