@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 public enum Modality {
     // THE ORDER OF ENTRIES MATTERS HERE
     FINAL(false),
-    SEALED(true),
+    SEALED(false),
     OPEN(true),
     ABSTRACT(true);
 
