@@ -72,6 +72,15 @@ public object Renderers {
 
     public val NAME: Renderer<Named> = Renderer { it.getName().asString() }
 
+    public val NAME_OF_PARENT_OR_FILE: Renderer<DeclarationDescriptor> = Renderer {
+        if (DescriptorUtils.isTopLevelDeclaration(it) && it is DeclarationDescriptorWithVisibility && it.visibility === Visibilities.PRIVATE) {
+            "file"
+        }
+        else {
+            "''" + it.containingDeclaration!!.name + "''"
+        }
+    }
+
     public val ELEMENT_TEXT: Renderer<PsiElement> = Renderer { it.getText() }
 
     public val DECLARATION_NAME: Renderer<JetNamedDeclaration> = Renderer { it.getNameAsSafeName().asString() }
