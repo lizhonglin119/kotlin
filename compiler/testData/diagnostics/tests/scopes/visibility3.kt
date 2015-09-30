@@ -25,18 +25,18 @@ package a
 
 fun test() {
     val y = makeA()
-    y.<!INVISIBLE_FILE_MEMBER!>bar<!>()
-    <!INVISIBLE_FILE_MEMBER!>foo<!>()
+    y.<!INVISIBLE_MEMBER(A; private; file)!>bar<!>()
+    <!INVISIBLE_MEMBER(foo; private; file)!>foo<!>()
 
-    val u : <!INVISIBLE_FILE_MEMBER!>A<!> = <!INVISIBLE_FILE_MEMBER!>A<!>()
+    val u : <!INVISIBLE_REFERENCE(A; private; file)!>A<!> = <!INVISIBLE_MEMBER(A; private; file)!>A<!>()
 
-    val z = <!INVISIBLE_FILE_MEMBER!>x<!>
-    <!INVISIBLE_FILE_MEMBER!>x<!> = 30
+    val z = <!INVISIBLE_MEMBER(x; private; file)!>x<!>
+    <!INVISIBLE_MEMBER(x; private; file)!>x<!> = 30
 
-    val po = <!INVISIBLE_FILE_MEMBER!>PO<!>
+    val po = <!INVISIBLE_MEMBER(PO; private; file)!>PO<!>
 }
 
-class B : <!INVISIBLE_FILE_MEMBER, INVISIBLE_FILE_MEMBER!>A<!>() {}
+class B : <!INVISIBLE_REFERENCE(A; private; file), INVISIBLE_MEMBER(A; private; file)!>A<!>() {}
 
 class Q {
     class W {
