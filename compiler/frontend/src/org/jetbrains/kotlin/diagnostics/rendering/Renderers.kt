@@ -77,7 +77,7 @@ public object Renderers {
             "file"
         }
         else {
-            "''" + it.containingDeclaration!!.name + "''"
+            "'" + it.containingDeclaration!!.name + "'"
         }
     }
 
