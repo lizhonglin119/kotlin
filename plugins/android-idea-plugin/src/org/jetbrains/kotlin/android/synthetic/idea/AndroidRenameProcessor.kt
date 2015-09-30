@@ -16,21 +16,15 @@
 
 package org.jetbrains.kotlin.android.synthetic.idea
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleServiceManager
 import com.intellij.openapi.module.ModuleUtilCore
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiField
-import com.intellij.psi.impl.light.LightElement
-import com.intellij.psi.search.SearchScope
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
-import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper
+import org.jetbrains.android.dom.wrappers.ValueResourceElementWrapper
 import org.jetbrains.android.util.AndroidResourceUtil
-import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.idToName
 import org.jetbrains.kotlin.android.synthetic.isAndroidSyntheticElement
 import org.jetbrains.kotlin.android.synthetic.nameToIdDeclaration
@@ -43,86 +37,60 @@ import org.jetbrains.kotlin.psi.JetProperty
 public class AndroidRenameProcessor : RenamePsiElementProcessor() {
 
     override fun canProcessElement(element: PsiElement): Boolean {
-        // Either renaming synthetic property, or value in layout xml, or R class field
         return (element.namedUnwrappedElement is JetProperty &&
-                isAndroidSyntheticElement(element.namedUnwrappedElement)) || element is XmlAttributeValue ||
-               isRClassField(element)
+                isAndroidSyntheticElement(element.namedUnwrappedElement)) || element is XmlAttributeValue
     }
-
-    private fun isRClassField(element: PsiElement): Boolean {
-        return if (element is PsiField) {
-            val outerClass = element.getParent()?.getParent()
-            if (outerClass !is PsiClass) return false
-
-            if (outerClass.getQualifiedName()?.startsWith(AndroidConst.SYNTHETIC_PACKAGE) ?: false)
-                true else false
-        }
-        else false
-    }
-
 
     private fun PsiElement.getModule(): Module? {
         val moduleInfo = getModuleInfo()
         return if (moduleInfo is ModuleSourceInfo) moduleInfo.module else null
     }
 
-    override fun prepareRenaming(
-            element: PsiElement?,
-            newName: String,
-            allRenames: MutableMap<PsiElement, String>,
-            scope: SearchScope
-    ) {
-        if (element != null && element.namedUnwrappedElement is JetProperty) {
+    override fun prepareRenaming(element: PsiElement, newName: String, allRenames: MutableMap<PsiElement, String>) {
+        super.prepareRenaming(element, newName, allRenames)
+
+        if (element.namedUnwrappedElement is JetProperty) {
             renameSyntheticProperty(element.namedUnwrappedElement as JetProperty, newName, allRenames)
         }
         else if (element is XmlAttributeValue) {
             renameAttributeValue(element, newName, allRenames)
         }
-        else if (element is LightElement) {
-            renameLightClassField(element, newName, allRenames)
-        }
     }
 
-    private fun renameSyntheticProperty(
-            jetProperty: JetProperty,
-            newName: String,
-            allRenames: MutableMap<PsiElement, String>
-    ) {
+    private fun renameSyntheticProperty(jetProperty: JetProperty, newName: String, allRenames: MutableMap<PsiElement, String>) {
         val module = jetProperty.getModule() ?: return
 
-        val processor = ModuleServiceManager.getService(module, javaClass<SyntheticFileGenerator>())!!
+        val processor = ModuleServiceManager.getService(module, SyntheticFileGenerator::class.java) ?: return
         val resourceManager = processor.layoutXmlFileManager
 
-        val psiElements = resourceManager.propertyToXmlAttributes(jetProperty).map { it as? XmlAttribute }.filterNotNull()
+        val attributes = resourceManager.propertyToXmlAttributes(jetProperty).map { it as? XmlAttribute }.filterNotNull()
+        val attributeValueNewName = nameToIdDeclaration(newName)
 
-        for (psiElement in psiElements) {
-            val valueElement = psiElement.getValueElement()
+        for (attribute in attributes) {
+            val attributeValue = attribute.valueElement ?: continue
+            allRenames[attributeValue] = attributeValueNewName
 
-            if (valueElement != null) {
-                allRenames[XmlAttributeValueWrapper(valueElement)] = nameToIdDeclaration(newName)
-                val name = AndroidResourceUtil.getResourceNameByReferenceText(newName) ?: return
-                for (resField in AndroidResourceUtil.findIdFields(psiElement)) {
-                    allRenames.put(resField, AndroidResourceUtil.getFieldNameByResourceName(name))
-                }
+            val name = AndroidResourceUtil.getResourceNameByReferenceText(newName) ?: return
+            for (resField in AndroidResourceUtil.findIdFields(attribute)) {
+                allRenames.put(resField, AndroidResourceUtil.getFieldNameByResourceName(name))
             }
         }
     }
 
-    private fun renameAttributeValue(
-            attribute: XmlAttributeValue,
-            newName: String,
-            allRenames: MutableMap<PsiElement, String>
-    ) {
-        val element = LazyValueResourceElementWrapper.computeLazyElement(attribute)
+    private fun renameAttributeValue(attribute: XmlAttributeValue, newName: String, allRenames: MutableMap<PsiElement, String>) {
         val module = attribute.getModule() ?: ModuleUtilCore.findModuleForFile(
-                attribute.getContainingFile().getVirtualFile(), attribute.getProject()) ?: return
+                attribute.containingFile.virtualFile, attribute.project) ?: return
 
-        val processor = ModuleServiceManager.getService(module, javaClass<SyntheticFileGenerator>())!!
-        if (element == null) return
-        val oldPropName = AndroidResourceUtil.getResourceNameByReferenceText(attribute.getValue())
+        val processor = ModuleServiceManager.getService(module, SyntheticFileGenerator::class.java)!!
+        val oldPropName = AndroidResourceUtil.getResourceNameByReferenceText(attribute.value)
         val newPropName = idToName(newName)
         if (oldPropName != null && newPropName != null) {
+            allRenames.keySet()
+                    .filter { it is ValueResourceElementWrapper || it is XmlAttributeValue }
+                    .forEach { allRenames.remove(it) }
+
             renameSyntheticProperties(allRenames, newPropName, oldPropName, processor)
+            allRenames[ValueResourceElementWrapper(attribute)] = newName
         }
     }
 
@@ -132,21 +100,10 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             oldPropName: String,
             processor: SyntheticFileGenerator
     ) {
-        val props = processor.getSyntheticFiles()?.flatMap { it.findChildrenByClass(javaClass<JetProperty>()).toList() }
-        val matchedProps = props?.filter { it.getName() == oldPropName } ?: listOf()
+        val props = processor.getSyntheticFiles().flatMap { it.findChildrenByClass(JetProperty::class.java).toList() }
+        val matchedProps = props.filter { it.name == oldPropName }
         for (prop in matchedProps) {
             allRenames[prop] = newPropName
         }
     }
-
-    private fun renameLightClassField(
-            field: LightElement,
-            newName: String,
-            allRenames: MutableMap<PsiElement, String>
-    ) {
-        val oldName = field.getName()!!
-        val processor = ServiceManager.getService(field.getProject(), javaClass<SyntheticFileGenerator>())
-        renameSyntheticProperties(allRenames, newName, oldName, processor)
-    }
-
 }
