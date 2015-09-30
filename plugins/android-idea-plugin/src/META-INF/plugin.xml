@@ -22,15 +22,13 @@
       <renamePsiElementProcessor id="KotlinAndroidSyntheticProperty"
                                  implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidRenameProcessor"
                                  order="first"/>
-
+      <referencesSearch implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidExtensionsReferencesSearcher"/>
       <errorHandler implementation="org.jetbrains.kotlin.plugin.android.AndroidExtensionsReportSubmitter"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
       <externalDeclarationsProvider implementation="org.jetbrains.kotlin.android.synthetic.idea.IDEAndroidExternalDeclarationsProvider"/>
       <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension"/>
-      <findUsagesHandlerDecorator implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidFindUsageHandlerDecorator"/>
-      <simpleNameReferenceExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidSimpleNameReferenceExtension"/>
       <defaultErrorMessages implementation="org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid"/>
       <storageComponentContainerContributor implementation="org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor"/>
       <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension"/>

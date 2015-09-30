@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.android
 
+import com.intellij.codeInsight.TargetElementUtil
 import org.jetbrains.kotlin.psi.JetProperty
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
-import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import kotlin.test.*
@@ -34,26 +34,26 @@ public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
         val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt");
         f.configureFromExistingVirtualFile(virtualFile)
 
-        val editor = f.getEditor()
-        val file = f.getFile()
+        val editor = f.editor
+        val file = f.file
         val completionEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(editor, file)
-        val element = TargetElementUtilBase.findTargetElement(
-                completionEditor, TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtilBase.ELEMENT_NAME_ACCEPTED)
+        val element = TargetElementUtil.findTargetElement(
+                completionEditor, TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtil.ELEMENT_NAME_ACCEPTED)
 
         assert(element != null)
         assertTrue(element is JetProperty)
 
-        RenameProcessor(f.getProject(), element, NEW_NAME, false, true).run()
+        RenameProcessor(f.project, element, NEW_NAME, false, true).run()
 
         // Rename xml attribute by property
-        val resolved = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
-        assertEquals("\"@+id/$NEW_NAME\"", resolved?.getText())
+        val resolved = GotoDeclarationAction.findTargetElement(f.project, f.editor, f.caretOffset)
+        assertEquals("\"@+id/$NEW_NAME\"", resolved?.text)
 
         // Rename property by attribute
-        val attributeElement = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
-        RenameProcessor(f.getProject(), attributeElement, "@+id/$OLD_NAME", false, true).run()
+        val attributeElement = GotoDeclarationAction.findTargetElement(f.project, f.editor, f.caretOffset)
+        RenameProcessor(f.project, attributeElement, "@+id/$OLD_NAME", false, true).run()
 
-        assertEquals(OLD_NAME, (f.getElementAtCaret() as JetProperty).getName())
+        assertEquals(OLD_NAME, (f.elementAtCaret as JetProperty).name)
     }
 
     override fun getTestDataPath() = KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/rename/" + getTestName(true) + "/"
