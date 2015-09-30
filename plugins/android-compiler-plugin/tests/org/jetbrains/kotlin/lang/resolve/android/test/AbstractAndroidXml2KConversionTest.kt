@@ -37,13 +37,13 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
         val layoutPaths = getResPaths(path)
         val supportV4 = testDirectory.name.startsWith("support")
         val parser = CliSyntheticFileGeneratorForConversionTest(
-                jetCoreEnvironment.project, File(testDirectory.parent, "AndroidManifest.xml").path, layoutPaths, supportV4)
+                jetCoreEnvironment.project, File(testDirectory.parentFile, "AndroidManifest.xml").path, layoutPaths, supportV4)
 
         val actual = parser.gen().toMap { it.name }
 
-        val expectedLayoutFiles = testDirectory.listFiles {
-            it.isFile() && it.name.endsWith(".kt")
-        }?.toMap { it.name.substringBefore(".kt") } ?: mapOf()
+        val expectedLayoutFiles = testDirectory
+                .listFiles { it.isFile && it.name.endsWith(".kt") }
+                ?.toMap { it.name.substringBefore(".kt") } ?: mapOf()
 
         assertEquals(expectedLayoutFiles.size(), actual.size())
 
@@ -59,12 +59,11 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
             doTest(path)
             fail("NoAndroidManifestFound not thrown")
         }
-        catch (e: SyntheticFileGenerator.NoAndroidManifestFound) {
-        }
+        catch (e: SyntheticFileGenerator.NoAndroidManifestFound) {}
     }
 
     private fun getEnvironment(): KotlinCoreEnvironment {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API)
-        return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 }
