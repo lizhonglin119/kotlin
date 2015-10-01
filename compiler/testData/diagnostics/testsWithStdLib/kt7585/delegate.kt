@@ -1,6 +1,6 @@
 // FILE: Base.java
 
-interface Base {}
+public interface Base {}
 
 // FILE: Other.java
 

@@ -9,7 +9,7 @@ class A<T extends CharSequence> {}
 
 import java.util.*;
 
-class B<E extends A> {}
+public class B<E extends A> {}
 
 // FILE: Test.java
 
