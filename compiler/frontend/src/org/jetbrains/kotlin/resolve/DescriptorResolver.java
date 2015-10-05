@@ -241,10 +241,9 @@ public class DescriptorResolver {
                 Collections.<ValueParameterDescriptor>emptyList(),
                 returnType,
                 Modality.FINAL,
-                property.getVisibility(),
-                true,
-                false
+                property.getVisibility()
         );
+        functionDescriptor.setOperator(true);
 
         trace.record(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter, functionDescriptor);
 
@@ -291,9 +290,7 @@ public class DescriptorResolver {
                 parameterDescriptors,
                 returnType,
                 Modality.FINAL,
-                Visibilities.PUBLIC,
-                false,
-                false
+                Visibilities.PUBLIC
         );
 
         trace.record(BindingContext.DATA_CLASS_COPY_FUNCTION, classDescriptor, functionDescriptor);
