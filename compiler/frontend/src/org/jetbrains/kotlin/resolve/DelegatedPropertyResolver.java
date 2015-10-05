@@ -58,8 +58,8 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.creat
 public class DelegatedPropertyResolver {
 
     public static final Name PROPERTY_DELEGATED_FUNCTION_NAME = Name.identifier("propertyDelegated");
-    public static final Name GETTER_NAME = Name.identifier("get");
-    public static final Name SETTER_NAME = Name.identifier("set");
+    public static final Name GETTER_NAME = Name.identifier("getValue");
+    public static final Name SETTER_NAME = Name.identifier("setValue");
 
     @NotNull private final ExpressionTypingServices expressionTypingServices;
     @NotNull private final FakeCallResolver fakeCallResolver;
@@ -223,7 +223,7 @@ public class DelegatedPropertyResolver {
         trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, resultingCall);
     }
 
-    /* Resolve get() or set() methods from delegate */
+    /* Resolve getValue() or setValue() methods from delegate */
     public OverloadResolutionResults<FunctionDescriptor> getDelegatedPropertyConventionMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetExpression delegateExpression,
