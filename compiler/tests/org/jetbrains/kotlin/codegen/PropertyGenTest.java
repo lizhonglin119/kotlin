@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 

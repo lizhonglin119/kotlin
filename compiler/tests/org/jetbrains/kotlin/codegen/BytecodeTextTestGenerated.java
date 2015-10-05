@@ -713,6 +713,27 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/mangling")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Mangling extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInMangling() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/mangling"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("field.kt")
+        public void testField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/mangling/field.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fun.kt")
+        public void testFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/mangling/fun.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/statements")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

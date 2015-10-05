@@ -47,7 +47,7 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
                    copyValueParameters(descriptor),
                    descriptor.getReturnType(),
                    Modality.FINAL,
-                   Visibilities.INTERNAL,
+                   Visibilities.PUBLIC,
                    descriptor.isOperator(),
                    descriptor.isInfix());
     }

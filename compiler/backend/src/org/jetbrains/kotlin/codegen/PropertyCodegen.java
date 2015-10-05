@@ -336,7 +336,7 @@ public class PropertyCodegen {
             parentBodyCodegen.addCompanionObjectPropertyToCopy(propertyDescriptor, defaultValue);
         }
 
-        String name = backingFieldContext.getFieldName(propertyDescriptor, isDelegate);
+        String name = backingFieldContext.getFieldName(propertyDescriptor, isDelegate, typeMapper);
 
         v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, Pair.create(type, name));
 
