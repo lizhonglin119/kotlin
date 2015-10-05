@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -832,10 +833,10 @@ public class JetTypeMapper {
                 }
             }
 
-            return OperatorConventions.INVOKE.asString();
+            return OperatorNameConventions.INVOKE.asString();
         }
         else if (isLocalFunction(descriptor) || isFunctionExpression(descriptor)) {
-            return OperatorConventions.INVOKE.asString();
+            return OperatorNameConventions.INVOKE.asString();
         }
         else {
             return descriptor.getName().asString();

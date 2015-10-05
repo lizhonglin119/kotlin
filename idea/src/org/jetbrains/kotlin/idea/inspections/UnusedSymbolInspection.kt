@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -208,7 +209,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     private fun isConventionalName(namedDeclaration: JetNamedDeclaration): Boolean {
         val name = namedDeclaration.getNameAsName()
-        return name!!.getOperationSymbolsToSearch().isNotEmpty() || name == OperatorConventions.INVOKE
+        return name!!.getOperationSymbolsToSearch().isNotEmpty() || name == OperatorNameConventions.INVOKE
     }
 
     private fun hasNonTrivialUsages(declaration: JetNamedDeclaration): Boolean {

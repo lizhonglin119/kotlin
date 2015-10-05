@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeIn
 import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object CreateHasNextFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetForExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): JetForExpression? {
@@ -38,6 +39,6 @@ object CreateHasNextFunctionActionFactory : CreateCallableMemberFromUsageFactory
                 DiagnosticFactory.cast(diagnostic, Errors.HAS_NEXT_MISSING, Errors.HAS_NEXT_FUNCTION_NONE_APPLICABLE)
         val ownerType = TypeInfo(diagnosticWithParameters.a, Variance.IN_VARIANCE)
         val returnType = TypeInfo(element.platform.builtIns.booleanType, Variance.OUT_VARIANCE)
-        return FunctionInfo(OperatorConventions.HAS_NEXT.asString(), ownerType, returnType, isOperator = true)
+        return FunctionInfo(OperatorNameConventions.HAS_NEXT.asString(), ownerType, returnType, isOperator = true)
     }
 }

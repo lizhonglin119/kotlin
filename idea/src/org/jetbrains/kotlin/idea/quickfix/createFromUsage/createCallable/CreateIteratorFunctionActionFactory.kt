@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetForExpression>() {
@@ -58,6 +59,6 @@ object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactor
                                            returnJetTypeArguments,
                                            returnJetType.memberScope)
         val returnType = TypeInfo(newReturnJetType, Variance.OUT_VARIANCE)
-        return FunctionInfo(OperatorConventions.ITERATOR.asString(), iterableType, returnType, isOperator = true)
+        return FunctionInfo(OperatorNameConventions.ITERATOR.asString(), iterableType, returnType, isOperator = true)
     }
 }

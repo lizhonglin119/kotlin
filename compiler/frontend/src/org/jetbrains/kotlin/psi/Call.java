@@ -61,7 +61,7 @@ public interface Call {
     JetElement getCallElement();
 
     enum CallType {
-        DEFAULT, ARRAY_GET_METHOD, ARRAY_SET_METHOD, INVOKE
+        DEFAULT, ARRAY_GET_METHOD, ARRAY_SET_METHOD, OperatorNameConventions, INVOKE
     }
 
     @NotNull
