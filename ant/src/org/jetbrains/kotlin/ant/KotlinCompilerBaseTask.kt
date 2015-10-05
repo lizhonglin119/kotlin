@@ -27,7 +27,7 @@ import java.io.PrintStream
 public abstract class KotlinCompilerBaseTask : Task() {
     protected abstract val compilerFqName: String
 
-    protected val args: MutableList<String> = arrayListOf()
+    internal val args: MutableList<String> = arrayListOf()
 
     public var src: Path? = null
     public var output: File? = null
