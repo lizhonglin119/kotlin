@@ -20,7 +20,7 @@ public interface ReadOnlyProperty<in R, out T> {
     public fun getValue(thisRef: R, property: PropertyMetadata): T
 
     @Deprecated("Use getValue() instead.", ReplaceWith("getValue(thisRef, property)"))
-    public final fun get(thisRef: R, property: PropertyMetadata): T = getValue(thisRef, property)
+    public fun get(thisRef: R, property: PropertyMetadata): T = getValue(thisRef, property)
 }
 
 /**
@@ -42,7 +42,7 @@ public interface ReadWriteProperty<in R, T> {
     public fun getValue(thisRef: R, property: PropertyMetadata): T
 
     @Deprecated("Use getValue() instead.", ReplaceWith("getValue(thisRef, property)"))
-    public final fun get(thisRef: R, property: PropertyMetadata): T = getValue(thisRef, property)
+    public fun get(thisRef: R, property: PropertyMetadata): T = getValue(thisRef, property)
 
     /**
      * Sets the value of the property for the given object.
@@ -53,5 +53,5 @@ public interface ReadWriteProperty<in R, T> {
     public fun setValue(thisRef: R, property: PropertyMetadata, value: T)
 
     @Deprecated("Use setValue() instead.", ReplaceWith("setValue(thisRef, property, value)"))
-    public final fun set(thisRef: R, property: PropertyMetadata, value: T)
+    public fun set(thisRef: R, property: PropertyMetadata, value: T) = setValue(thisRef, property, value)
 }

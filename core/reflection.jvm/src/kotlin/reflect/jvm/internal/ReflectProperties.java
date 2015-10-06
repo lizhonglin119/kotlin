@@ -31,7 +31,7 @@ import java.lang.ref.WeakReference;
     public static abstract class Val<T> {
         private static final Object NULL_VALUE = new Object() {};
 
-        public abstract T get(Object instance, Object metadata);
+        public abstract T getValue(Object instance, Object metadata);
 
         protected Object escape(T value) {
             return value == null ? NULL_VALUE : value;
@@ -53,7 +53,7 @@ import java.lang.ref.WeakReference;
         }
 
         @Override
-        public T get(Object instance, Object metadata) {
+        public T getValue(Object instance, Object metadata) {
             Object cached = value;
             if (cached != null) {
                 return unescape(cached);
@@ -80,7 +80,7 @@ import java.lang.ref.WeakReference;
         }
 
         @Override
-        public T get(Object instance, Object metadata) {
+        public T getValue(Object instance, Object metadata) {
             SoftReference<Object> cached = value;
             if (cached != null) {
                 Object result = cached.get();
@@ -107,7 +107,7 @@ import java.lang.ref.WeakReference;
         }
 
         @Override
-        public T get(Object instance, Object metadata) {
+        public T getValue(Object instance, Object metadata) {
             WeakReference<Object> cached = value;
             if (cached != null) {
                 Object result = cached.get();

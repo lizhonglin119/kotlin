@@ -21,11 +21,13 @@ import kotlin.properties.ReadOnlyProperty
 public class CachedValueProperty<TValue : Any, TTimestamp : Any>(
         private val calculator: () -> TValue,
         private val timestampCalculator: () -> TTimestamp
-) : ReadOnlyProperty<Any?, TValue> {
+) {
     private var value: TValue? = null
     private var timestamp: TTimestamp? = null
 
-    public override fun get(thisRef: Any?, desc: PropertyMetadata): TValue {
+    fun get(thisRef: Any?, desc: kotlin.PropertyMetadata) = getValue(thisRef, desc)
+
+    public fun getValue(thisRef: Any?, desc: PropertyMetadata): TValue {
         val currentTimestamp = timestampCalculator()
         if (value == null || timestamp != currentTimestamp) {
             value = calculator()

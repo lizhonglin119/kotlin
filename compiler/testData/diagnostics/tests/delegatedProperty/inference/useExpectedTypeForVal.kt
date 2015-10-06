@@ -12,7 +12,7 @@ fun getMyProperty1<A, B>() = MyProperty1<A, B>()
 
 class MyProperty1<R, T> {
 
-    public fun get(thisRef: R, desc: PropertyMetadata): T {
+    public fun getValue(thisRef: R, desc: PropertyMetadata): T {
         println("get $thisRef ${desc.name}")
         throw Exception()
     }
@@ -32,7 +32,7 @@ fun getMyProperty2<A>() = MyProperty2<A>()
 
 class MyProperty2<T> {
 
-    public fun get(thisRef: Any?, desc: PropertyMetadata): T {
+    public fun getValue(thisRef: Any?, desc: PropertyMetadata): T {
         println("get $thisRef ${desc.name}")
         throw Exception()
     }
@@ -52,7 +52,7 @@ fun getMyProperty3<A>() = MyProperty3<A>()
 
 class MyProperty3<T> {
 
-    public fun get(thisRef: T, desc: PropertyMetadata): String {
+    public fun getValue(thisRef: T, desc: PropertyMetadata): String {
         println("get $thisRef ${desc.name}")
         return ""
     }

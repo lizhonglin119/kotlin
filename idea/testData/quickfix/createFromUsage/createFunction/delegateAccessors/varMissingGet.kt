@@ -1,6 +1,6 @@
 // "Create member function 'get'" "true"
 class F {
-    fun set(x: X, propertyMetadata: PropertyMetadata, i: Int) { }
+    fun setValue(x: X, propertyMetadata: PropertyMetadata, i: Int) { }
 }
 
 class X {
