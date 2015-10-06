@@ -8,3 +8,4 @@ abstract class ClassB1 {
     internal abstract val member: Int
 }
 
+class ClassD: InternalClass2()

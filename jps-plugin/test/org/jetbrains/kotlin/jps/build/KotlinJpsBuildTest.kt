@@ -492,7 +492,14 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     public fun testCircularDependenciesInternalFromAnotherModule() {
         initProject()
         val result = makeAll()
-        result.assertSuccessful()
+        result.assertFailed()
+
+        val actualErrors = result.getMessages(BuildMessage.Kind.ERROR)
+                .map { it as CompilerMessage }
+                .map { "${it.messageText} at line ${it.line}, column ${it.column}" }.sorted().joinToString("\n")
+        val projectRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
+        val expectedFile = File(projectRoot, "errors.txt")
+        JetTestUtils.assertEqualsToFile(expectedFile, actualErrors)
     }
 
     public fun testCircularDependencyWithReferenceToOldVersionLib() {
