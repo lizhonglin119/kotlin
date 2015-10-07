@@ -39,7 +39,7 @@ public object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersion
 
     private val VERSION = 2
 
-    @Suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
+    @Suppress("DEPRECATION")
     private val kotlinAnnotationsDesc = setOf(
             OLD_JET_CLASS_ANNOTATION,
             OLD_JET_PACKAGE_CLASS_ANNOTATION,
