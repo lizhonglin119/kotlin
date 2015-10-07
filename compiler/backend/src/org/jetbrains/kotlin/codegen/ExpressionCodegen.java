@@ -2231,10 +2231,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         else if (propertyDescriptor.getContainingDeclaration() == backingFieldContext.getContextDescriptor()) {
             assert backingFieldContext instanceof FieldOwnerContext
                     : "Actual context is " + backingFieldContext + " but should be instance of FieldOwnerContext";
-            fieldName = ((FieldOwnerContext) backingFieldContext).getFieldName(propertyDescriptor, isDelegatedProperty, typeMapper);
+            fieldName = ((FieldOwnerContext) backingFieldContext).getFieldName(propertyDescriptor, isDelegatedProperty);
         }
         else {
-            fieldName = typeMapper.mapDefaultFieldName(propertyDescriptor, isDelegatedProperty);
+            fieldName = JetTypeMapper.mapDefaultFieldName(propertyDescriptor, isDelegatedProperty);
         }
 
         return StackValue.property(propertyDescriptor, backingFieldOwner,

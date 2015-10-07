@@ -665,7 +665,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.load(index, classAsmType);
             if (couldUseDirectAccessToProperty(propertyDescriptor, /* forGetter = */ true, /* isDelegated = */ false, context)) {
                 Type type = typeMapper.mapType(propertyDescriptor.getType());
-                String fieldName = ((FieldOwnerContext) context.getParentContext()).getFieldName(propertyDescriptor, false, typeMapper);
+                String fieldName = ((FieldOwnerContext) context.getParentContext()).getFieldName(propertyDescriptor, false);
                 iv.getfield(classAsmType.getInternalName(), fieldName, type.getDescriptor());
                 return type.getReturnType();
             }
@@ -1026,7 +1026,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             Type type = typeMapper.mapType(property);
             FieldVisitor fv = v.newField(Synthetic(DescriptorToSourceUtils.descriptorToDeclaration(property), property),
-                                         ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(property, false, typeMapper),
+                                         ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(property, false),
                                          type.getDescriptor(), typeMapper.mapFieldSignature(property.getType()),
                                          info.defaultValue);
 
@@ -1159,7 +1159,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 iv.load(codegen.myFrameMap.getIndex(descriptor), type);
                 PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
                 assert propertyDescriptor != null : "Property descriptor is not found for primary constructor parameter: " + parameter;
-                iv.putfield(classAsmType.getInternalName(), context.getFieldName(propertyDescriptor, false, typeMapper), type.getDescriptor());
+                iv.putfield(classAsmType.getInternalName(), context.getFieldName(propertyDescriptor, false), type.getDescriptor());
             }
             curParam++;
         }

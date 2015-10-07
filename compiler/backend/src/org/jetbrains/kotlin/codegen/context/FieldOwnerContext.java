@@ -45,7 +45,7 @@ public abstract class FieldOwnerContext<T extends DeclarationDescriptor> extends
     }
 
     @NotNull
-    public String getFieldName(@NotNull PropertyDescriptor possiblySubstitutedDescriptor, boolean isDelegated, @NotNull JetTypeMapper mapper) {
+    public String getFieldName(@NotNull PropertyDescriptor possiblySubstitutedDescriptor, boolean isDelegated) {
         if (possiblySubstitutedDescriptor instanceof AccessorForPropertyDescriptor) {
             possiblySubstitutedDescriptor = ((AccessorForPropertyDescriptor) possiblySubstitutedDescriptor).getCalleeDescriptor();
         }
@@ -53,7 +53,7 @@ public abstract class FieldOwnerContext<T extends DeclarationDescriptor> extends
         PropertyDescriptor descriptor = possiblySubstitutedDescriptor.getOriginal();
         assert descriptor.getKind().isReal() : "Only declared properties can have backing fields: " + descriptor;
 
-        String defaultPropertyName = mapper.mapDefaultFieldName(descriptor, isDelegated);
+        String defaultPropertyName = JetTypeMapper.mapDefaultFieldName(descriptor, isDelegated);
 
         Map<PropertyDescriptor, String> descriptor2Name = fieldNames.get(defaultPropertyName);
         if (descriptor2Name == null) {

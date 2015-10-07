@@ -856,7 +856,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public String mapDefaultFieldName(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegated) {
+    public static String mapDefaultFieldName(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegated) {
         String name;
         if (propertyDescriptor instanceof AccessorForPropertyDescriptor) {
             name = ((AccessorForPropertyDescriptor) propertyDescriptor).getCalleeDescriptor().getName().asString();
@@ -864,7 +864,7 @@ public class JetTypeMapper {
         else {
             name = propertyDescriptor.getName().asString();
         }
-        return updateMemberNameIfInternal(isDelegated ? name + JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX : name, propertyDescriptor);
+        return isDelegated ? name + JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX : name;
     }
 
     @NotNull
