@@ -86,7 +86,7 @@ class KotlinCompilerAdapter : Javac13() {
 
         if (hasKotlinFilesInSources) {
             kotlinc.execute()
-            if (Integer.valueOf(0) != kotlinc.exitCode) {
+            if (kotlinc.exitCode != 0) {
                 // Don't run javac if failOnError = false and there were errors on Kotlin sources
                 return false
             }
@@ -102,7 +102,7 @@ class KotlinCompilerAdapter : Javac13() {
 
         addRuntimeToJavacClasspath(kotlinc)
 
-        return compileList.size() == 0 || super.execute()
+        return compileList.isEmpty() || super.execute()
     }
 
     private fun addRuntimeToJavacClasspath(kotlinc: Kotlin2JvmTask) {
@@ -121,7 +121,10 @@ class KotlinCompilerAdapter : Javac13() {
         val checkVersion = AntVersion()
         checkVersion.atLeast = "1.8.2"
         if (!checkVersion.eval()) {
-            javac.log("<withKotlin> task requires Ant of version at least 1.8.2 to operate reliably. " + "Please upgrade or, as a workaround, make sure you have at least one Java source and " + "the output directory is clean before running this task. " + "You have: " + getProject().getProperty(MagicNames.ANT_VERSION), MSG_WARN)
+            javac.log("<withKotlin> task requires Ant of version at least 1.8.2 to operate reliably. " +
+                      "Please upgrade or, as a workaround, make sure you have at least one Java source and " +
+                      "the output directory is clean before running this task. " +
+                      "You have: " + getProject().getProperty(MagicNames.ANT_VERSION), MSG_WARN)
         }
     }
 
