@@ -135,6 +135,8 @@ sealed class EffectiveVisibility(val name: String) {
                 lowerBound(this.declarationDescriptor?.forClassifier(classes) ?: Public,
                            parameters.map { it.typeConstructor.forTypeConstructor(classes) })
 
-        fun MemberDescriptor.forMember() = visibility.forVisibility(this.containingDeclaration as? ClassDescriptor)
+        fun MemberDescriptor.forMember() =
+                lowerBound(visibility.forVisibility(this.containingDeclaration as? ClassDescriptor),
+                           (this.containingDeclaration as? ClassDescriptor)?.forClass() ?: Public)
     }
 }
