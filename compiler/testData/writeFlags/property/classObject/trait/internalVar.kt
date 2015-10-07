@@ -1,6 +1,6 @@
 interface Test {
   companion object {
-    var prop: Int = 0;
+    internal var prop: Int = 0;
   }
 }
 

@@ -1,7 +1,6 @@
 interface Test {
   companion object {
-    internal var prop: Int = 0
-      private set
+    internal const val prop: Int = 0;
   }
 }
 
@@ -11,4 +10,4 @@ interface Test {
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test$Companion, prop
-// FLAGS: ACC_PRIVATE, ACC_STATIC
+// FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_STATIC
