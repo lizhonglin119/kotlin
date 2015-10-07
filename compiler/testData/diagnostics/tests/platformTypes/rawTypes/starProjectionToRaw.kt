@@ -3,7 +3,7 @@
 
 import java.util.*;
 
-class A<T extends CharSequence> {}
+public class A<T extends CharSequence> {}
 
 // FILE: B.java
 

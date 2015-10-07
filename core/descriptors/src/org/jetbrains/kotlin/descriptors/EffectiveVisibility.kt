@@ -132,11 +132,15 @@ sealed class EffectiveVisibility(val name: String) {
                                     typeConstructor.forTypeConstructor(classes + this)
                                 })
 
-        fun JetType.forType() = constructor.forTypeConstructor(emptySet())
+        fun JetType.forType() = forType(emptySet())
 
-        private fun TypeConstructor.forTypeConstructor(classes: Set<ClassDescriptor>): EffectiveVisibility =
-                lowerBound(this.declarationDescriptor?.forClassifier(classes) ?: Public,
-                           parameters.map { it.typeConstructor.forTypeConstructor(classes) })
+        private fun JetType.forType(types: Set<JetType>): EffectiveVisibility =
+                if (this in types) Public
+                else lowerBound(constructor.forTypeConstructor(emptySet()),
+                                arguments.map { it.type.forType(types + this) } )
+
+        private fun TypeConstructor.forTypeConstructor(classes: Set<ClassDescriptor>) =
+                this.declarationDescriptor?.forClassifier(classes) ?: Public
 
         fun MemberDescriptor.forMember() =
                 lowerBound(visibility.forVisibility(this.containingDeclaration as? ClassDescriptor),
