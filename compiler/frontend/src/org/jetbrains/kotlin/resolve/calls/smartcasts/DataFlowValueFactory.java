@@ -323,7 +323,63 @@ public class DataFlowValueFactory {
         return NO_IDENTIFIER_INFO;
     }
 
-    public static Kind variableKind(
+    @NotNull
+    private static DeclarationDescriptor getVariableDeclarationSite(@NotNull VariableDescriptor variableDescriptor) {
+        DeclarationDescriptor containingDeclarationDescriptor = variableDescriptor.getContainingDeclaration();
+        if (containingDeclarationDescriptor instanceof ConstructorDescriptor
+            && ((ConstructorDescriptor) containingDeclarationDescriptor).isPrimary()) {
+            // This code is necessary just because JetClassInitializer has no associated descriptor in trace
+            // Because of it we have to use class itself instead of initializer
+            containingDeclarationDescriptor = containingDeclarationDescriptor.getContainingDeclaration();
+            assert containingDeclarationDescriptor != null : "No containing declaration for primary constructor";
+        }
+        return containingDeclarationDescriptor;
+    }
+
+    private static boolean isAccessedInsideClosure(
+            @NotNull DeclarationDescriptor declarationSiteDescriptor,
+            @NotNull BindingContext bindingContext,
+            @NotNull JetElement accessElement
+    ) {
+        PsiElement parent = accessElement.getParent();
+        while (parent != null) {
+            // We are inside some declaration
+            if (parent instanceof JetDeclarationWithBody || parent instanceof JetClassOrObject) {
+                DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, parent);
+                if (declarationSiteDescriptor.equals(descriptor)) {
+                    // Access is at the same declaration: not in closure
+                    break;
+                }
+                else {
+                    // Access is lower than parent: in closure
+                    return true;
+                }
+            }
+            parent = parent.getParent();
+        }
+        return false;
+    }
+
+    private static boolean isAccessedAfterClosureWriters(
+            @NotNull DeclarationDescriptor declarationSiteDescriptor,
+            @NotNull Set<JetDeclaration> writers,
+            @NotNull BindingContext bindingContext,
+            @NotNull JetElement accessElement
+    ) {
+        // All writers should be before access element, with the exception:
+        // writer which is the same with declaration site does not count
+        for (JetDeclaration writer : writers) {
+            DeclarationDescriptor writerDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, writer);
+            // We are after some writer: unpredictable
+            if (!declarationSiteDescriptor.equals(writerDescriptor) && !PsiUtilsKt.before(accessElement, writer)) {
+                return true;
+            }
+        }
+        // Access is before all writers
+        return false;
+    }
+
+    private static Kind variableKind(
             @NotNull VariableDescriptor variableDescriptor,
             @Nullable ModuleDescriptor usageModule,
             @NotNull BindingContext bindingContext,
@@ -333,52 +389,18 @@ public class DataFlowValueFactory {
         boolean isLocalVar = variableDescriptor.isVar() && variableDescriptor instanceof LocalVariableDescriptor;
         if (!isLocalVar) return OTHER;
         // Local variable classification: PREDICTABLE or UNPREDICTABLE
-        // Search for preliminary visitor of parent descriptor
-        DeclarationDescriptor parentDescriptor = variableDescriptor.getContainingDeclaration();
-        PreliminaryDeclarationVisitor preliminaryVisitor = bindingContext.get(PRELIMINARY_VISITOR, parentDescriptor);
-        while (preliminaryVisitor == null && parentDescriptor != null) {
-            parentDescriptor = parentDescriptor.getContainingDeclaration();
-            preliminaryVisitor = bindingContext.get(PRELIMINARY_VISITOR, parentDescriptor);
-        }
-        // Strange situation... but we definitely can predict nothing here
-        if (preliminaryVisitor == null) return UNPREDICTABLE_VARIABLE;
+        PreliminaryDeclarationVisitor preliminaryVisitor =
+                PreliminaryDeclarationVisitor.Companion.forVariable(variableDescriptor, bindingContext);
+        assert preliminaryVisitor != null : "Preliminary visitor not found for variable " + variableDescriptor;
         // Analyze who writes variable
         // If there is no writer: predictable
-        // If access element is below the declarer (in some local declaration inside it): unpredictable
-        // Otherwise, predictable iff considered position is BEFORE all writers
         Set<JetDeclaration> writers = preliminaryVisitor.writers(variableDescriptor);
         if (writers.isEmpty()) return PREDICTABLE_VARIABLE;
-        PsiElement parent = accessElement.getParent();
-        DeclarationDescriptor containingDeclarationDescriptor = variableDescriptor.getContainingDeclaration();
-        if (containingDeclarationDescriptor instanceof ConstructorDescriptor
-            && ((ConstructorDescriptor) containingDeclarationDescriptor).isPrimary()) {
-            containingDeclarationDescriptor = containingDeclarationDescriptor.getContainingDeclaration();
-        }
-        while (parent != null) {
-            // We are inside some declaration
-            if (parent instanceof JetDeclarationWithBody || parent instanceof JetClassOrObject) {
-                DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, parent);
-                if (descriptor == null ? containingDeclarationDescriptor == null : descriptor.equals(containingDeclarationDescriptor)) {
-                    // We are lower than parent: unpredictable
-                    return UNPREDICTABLE_VARIABLE;
-                }
-                else {
-                    break;
-                }
-            }
-            parent = parent.getParent();
-        }
-        // All writers should be before our position, with the exception:
-        // writer which is the same with the declarer does not count
-        for (JetDeclaration writer : writers) {
-            DeclarationDescriptor writerDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, writer);
-            if (writerDescriptor == containingDeclarationDescriptor) {
-                continue;
-            }
-            // We are after some writer: unpredictable
-            if (!PsiUtilsKt.before(accessElement, writer)) return UNPREDICTABLE_VARIABLE;
-        }
-        // We are before all writers
+        // If access element is inside closure: unpredictable
+        DeclarationDescriptor declarationSiteDescriptor = getVariableDeclarationSite(variableDescriptor);
+        if (isAccessedInsideClosure(declarationSiteDescriptor, bindingContext, accessElement)) return UNPREDICTABLE_VARIABLE;
+        // Otherwise, predictable iff considered position is BEFORE all writers except declarer itself
+        if (isAccessedAfterClosureWriters(declarationSiteDescriptor, writers, bindingContext, accessElement)) return UNPREDICTABLE_VARIABLE;
         return PREDICTABLE_VARIABLE;
     }
 

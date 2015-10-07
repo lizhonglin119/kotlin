@@ -27,7 +27,7 @@ abstract class AssignedVariablesSearcher: JetTreeVisitorVoid() {
 
     private val assignedNames: SetMultimap<Name, JetDeclaration?> = LinkedHashMultimap.create()
 
-    public fun writers(variableDescriptor: VariableDescriptor) = assignedNames[variableDescriptor.name]
+    public open fun writers(variableDescriptor: VariableDescriptor) = assignedNames[variableDescriptor.name]
 
     public fun hasWriters(variableDescriptor: VariableDescriptor) = writers(variableDescriptor).isNotEmpty()
 

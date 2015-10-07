@@ -13860,6 +13860,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("varChangedInLocalInitializer.kt")
+            public void testVarChangedInLocalInitializer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varChangedInLocalInitializer.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("varInAccessor.kt")
             public void testVarInAccessor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varInAccessor.kt");

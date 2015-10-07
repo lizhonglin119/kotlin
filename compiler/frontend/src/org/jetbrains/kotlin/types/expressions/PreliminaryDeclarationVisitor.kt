@@ -22,14 +22,32 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 
-class PreliminaryDeclarationVisitor: AssignedVariablesSearcher() {
+class PreliminaryDeclarationVisitor(val declaration: JetDeclaration): AssignedVariablesSearcher() {
+
+    override fun writers(variableDescriptor: VariableDescriptor) =
+            if (lazyTrigger) super.writers(variableDescriptor)
+            else throw AssertionError("Preliminary declaration visitor not initialized")
+
+    private val lazyTrigger by lazy {
+        declaration.accept(this)
+        true
+    }
 
     companion object {
         fun visitDeclaration(declaration: JetDeclaration, descriptor: DeclarationDescriptor, trace: BindingTrace) {
-            val visitor = PreliminaryDeclarationVisitor()
-            declaration.accept(visitor)
-            // Store into context?
+            val visitor = PreliminaryDeclarationVisitor(declaration)
             trace.record(BindingContext.PRELIMINARY_VISITOR, descriptor, visitor);
+        }
+
+        fun forVariable(variableDescriptor: VariableDescriptor, bindingContext: BindingContext): PreliminaryDeclarationVisitor? {
+            // Search for preliminary visitor of parent descriptor
+            var parentDescriptor: DeclarationDescriptor? = variableDescriptor.containingDeclaration
+            var preliminaryVisitor = bindingContext.get(BindingContext.PRELIMINARY_VISITOR, parentDescriptor)
+            while (preliminaryVisitor == null && parentDescriptor != null) {
+                parentDescriptor = parentDescriptor.containingDeclaration
+                preliminaryVisitor = bindingContext.get(BindingContext.PRELIMINARY_VISITOR, parentDescriptor)
+            }
+            return preliminaryVisitor
         }
     }
 }
