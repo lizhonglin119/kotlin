@@ -17,8 +17,8 @@ public class ErrorsJvmClass {
 }
 
 fun box(): String {
-    val genericTypeInTrait = javaClass<ErrorsJvmTrait>().getField("param").getGenericType()
-    if (genericTypeInTrait.toString() != "test.G<java.lang.String>") return "fail1: $genericTypeInTrait"
+//    val genericTypeInTrait = javaClass<ErrorsJvmTrait>().getField("param").getGenericType()
+//    if (genericTypeInTrait.toString() != "test.G<java.lang.String>") return "fail1: $genericTypeInTrait"
 
     val genericTypeInClassObject = ErrorsJvmTrait.javaClass.getDeclaredField("param").getGenericType()
     if (genericTypeInClassObject.toString() != "test.G<java.lang.String>") return "fail1: $genericTypeInClassObject"
