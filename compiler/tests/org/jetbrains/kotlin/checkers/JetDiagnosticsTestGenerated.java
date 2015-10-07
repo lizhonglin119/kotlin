@@ -5730,6 +5730,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/exposed"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("delegate.kt")
+            public void testDelegate() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/delegate.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("functional.kt")
             public void testFunctional() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/functional.kt");
