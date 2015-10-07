@@ -235,7 +235,8 @@ public class JvmCodegenUtil {
         av.visit(JvmAnnotationNames.OLD_ABI_VERSION_FIELD_NAME, JvmAbi.VERSION.getMinor());
     }
 
-    public static String sanitizeAsJavaIdentifier(String str) {
+    @NotNull
+    public static String sanitizeAsJavaIdentifier(@NotNull String str) {
         return PackagePartClassUtils.sanitizeAsJavaIdentifier(str);
     }
 }

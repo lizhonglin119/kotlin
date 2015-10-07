@@ -94,7 +94,7 @@ public class JetTypeMapper {
             @NotNull ClassBuilderMode classBuilderMode,
             @NotNull JvmFileClassesProvider fileClassesProvider,
             @Nullable IncrementalCache incrementalCache,
-            String moduleName
+            @NotNull String moduleName
     ) {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
@@ -860,7 +860,8 @@ public class JetTypeMapper {
         String name;
         if (propertyDescriptor instanceof AccessorForPropertyDescriptor) {
             name = ((AccessorForPropertyDescriptor) propertyDescriptor).getCalleeDescriptor().getName().asString();
-        } else {
+        }
+        else {
             name = propertyDescriptor.getName().asString();
         }
         return updateMemberNameIfInternal(isDelegated ? name + JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX : name, propertyDescriptor);
@@ -878,7 +879,7 @@ public class JetTypeMapper {
         }
 
         if (!(descriptor instanceof ConstructorDescriptor) && descriptor.getVisibility() == Visibilities.INTERNAL) {
-            return name + (moduleName != null ? "$" + JvmCodegenUtil.sanitizeAsJavaIdentifier(moduleName) : "");
+            return name + "$" + JvmCodegenUtil.sanitizeAsJavaIdentifier(moduleName);
         }
 
         return name;

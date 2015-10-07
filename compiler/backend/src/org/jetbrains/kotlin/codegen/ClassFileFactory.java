@@ -347,5 +347,4 @@ public class ClassFileFactory implements OutputFileCollection {
     public List<JetFile> getInputFiles() {
         return state.getFiles();
     }
-
 }
