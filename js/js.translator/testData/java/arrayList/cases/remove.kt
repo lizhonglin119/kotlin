@@ -9,6 +9,6 @@ fun box(): Boolean {
     }
 
     val removedElement = arr.remove(2)
-    val removed = arr.remove(4: Any)
+    val removed = arr.remove(4 as Any)
     return arr.size() == 4 && removedElement == 2 && removed && arr[0] == 0 && arr[1] == 1 && arr[2] == 3 && arr[3] == 5
 }
