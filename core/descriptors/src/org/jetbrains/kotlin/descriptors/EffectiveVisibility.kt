@@ -40,7 +40,11 @@ sealed class EffectiveVisibility(val name: String) {
                 else super.relation(other)
     }
 
-    data class Protected(val container: ClassDescriptor?) : EffectiveVisibility("protected") {
+    class Protected(val container: ClassDescriptor?) : EffectiveVisibility("protected") {
+
+        override fun equals(other: Any?) = (other is Protected && container == other.container)
+
+        override fun hashCode() = container?.hashCode() ?: 0
 
         override fun toString() = "${super.toString()}(${container?.name ?: '?'})"
 
@@ -112,8 +116,7 @@ sealed class EffectiveVisibility(val name: String) {
             Visibilities.PUBLIC -> Public
             // Considered effectively public
             Visibilities.LOCAL -> Public
-            // TODO: Java visibilities (in Java context?)
-            else -> Private
+            else -> this.effectiveVisibility(descriptor)
         }
 
         private fun ClassifierDescriptor.forClassifier(classes: Set<ClassDescriptor>): EffectiveVisibility =
