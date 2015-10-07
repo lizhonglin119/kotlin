@@ -249,6 +249,9 @@ public class DeclarationsChecker {
             }
             i++;
         }
+        if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null && klass.getPrimaryConstructor() != null) {
+            checkFunctionExposedType(klass.getPrimaryConstructor(), classDescriptor.getUnsubstitutedPrimaryConstructor());
+        }
     }
 
     private static void removeDuplicateTypes(Set<JetType> conflictingTypes) {
@@ -603,7 +606,7 @@ public class DeclarationsChecker {
 
     private void checkFunctionExposedType(@NotNull JetFunction function, @NotNull FunctionDescriptor functionDescriptor) {
         EffectiveVisibility functionVisibility = EffectiveVisibility.Companion.forMember(functionDescriptor);
-        if (!(function instanceof JetSecondaryConstructor)) {
+        if (!(function instanceof JetConstructor)) {
             EffectiveVisibility returnTypeVisibility = EffectiveVisibility.Companion.forType(functionDescriptor.getReturnType());
             if (!returnTypeVisibility.sameOrBetter(functionVisibility)) {
                 PsiElement reportOn = function.getNameIdentifier();

@@ -6,7 +6,9 @@ public interface Your: <!EXPOSED_SUPER_INTERFACE!>My<!> {
     fun <T: Base> foo(): T
 }
 
-public class Derived<<!EXPOSED_TYPE_PARAMETER_BOUND!>T: My<!>>(val x: My): <!EXPOSED_SUPER_CLASS!>Base()<!> {
+public class Derived<<!EXPOSED_TYPE_PARAMETER_BOUND!>T: My<!>>(<!EXPOSED_PARAMETER_TYPE!>val x: My<!>): <!EXPOSED_SUPER_CLASS!>Base()<!> {
+
+    constructor(<!EXPOSED_PARAMETER_TYPE!>xx: My?<!>, <!EXPOSED_PARAMETER_TYPE!>x: My<!>): this(xx ?: x)
 
     <!EXPOSED_PROPERTY_TYPE!>val y: Base? = null<!>
 

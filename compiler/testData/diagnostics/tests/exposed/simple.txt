@@ -9,6 +9,7 @@ private open class Base {
 
 public final class Derived</*0*/ T : My> : Base {
     public constructor Derived</*0*/ T : My>(/*0*/ x: My)
+    public constructor Derived</*0*/ T : My>(/*0*/ xx: My?, /*1*/ x: My)
     public final val x: My
     public final val y: Base? = null
     public final val My.z: kotlin.Int
