@@ -213,9 +213,10 @@ public class AsmUtil {
             flags |= ACC_ABSTRACT;
         }
 
-        if (JetTypeMapper.isAccessor(functionDescriptor)
-            || functionDescriptor.getVisibility() == Visibilities.INTERNAL
-            || AnnotationUtilKt.hasJvmSyntheticAnnotation(functionDescriptor)) {
+        if (JetTypeMapper.isAccessor(functionDescriptor) ||
+            functionDescriptor.getVisibility() == Visibilities.INTERNAL ||
+            AnnotationUtilKt.hasJvmSyntheticAnnotation(functionDescriptor) ||
+            isTopLevelDeclaration(functionDescriptor) && functionDescriptor.getVisibility() == Visibilities.PRIVATE ) {
             flags |= ACC_SYNTHETIC;
         }
 
@@ -378,7 +379,7 @@ public class AsmUtil {
         if (memberDescriptor instanceof PropertyDescriptor && ((PropertyDescriptor) memberDescriptor).isConst()) return null;
 
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
-            return ACC_PUBLIC;
+            return NO_FLAG_PACKAGE_PRIVATE;
         }
         return null;
     }
