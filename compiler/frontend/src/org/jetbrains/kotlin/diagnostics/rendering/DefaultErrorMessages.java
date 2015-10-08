@@ -289,6 +289,7 @@ public class DefaultErrorMessages {
         MAP.put(MANY_COMPANION_OBJECTS, "Only one companion object is allowed per class");
 
         MAP.put(DEPRECATION, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
+        MAP.put(DEPRECATION_ERROR, "Calling ''{0}'' is an error. {1}", DEPRECATION_RENDERER, STRING);
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
         MAP.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated");
