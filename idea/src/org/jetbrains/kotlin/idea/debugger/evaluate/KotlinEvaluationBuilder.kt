@@ -107,14 +107,17 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
                     "It may happen when you've changed source file after starting a debug process.")
         }
 
-        if (codeFragment.context !is JetElement) {
+        val contextElement = codeFragment.context
+        if (contextElement !is JetElement) {
             val attachments = arrayOf(attachmentByPsiFile(position.file),
                                       attachmentByPsiFile(codeFragment),
                                       Attachment("breakpoint.info", "line: ${position.line}"))
 
-            logger.error("Trying to evaluate ${codeFragment.javaClass} with context ${codeFragment.context?.javaClass}", mergeAttachments(*attachments))
+            logger.error("Trying to evaluate ${codeFragment.javaClass} with context ${contextElement?.javaClass}", mergeAttachments(*attachments))
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in this context")
         }
+
+        codeFragment.addAllUnderImport(contextElement.getContainingJetFile().packageFqName)
 
         return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment, position))
     }

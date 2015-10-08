@@ -25,9 +25,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import java.util.LinkedHashSet
+import java.util.*
 
 public abstract class JetCodeFragment(
         private val _project: Project,
@@ -105,6 +106,18 @@ public abstract class JetCodeFragment(
         myImports.addAll(imports.split(IMPORT_SEPARATOR))
     }
 
+    fun addImport(fqName: FqName) {
+        if (!fqName.isRoot) {
+            myImports.add("import ${fqName.asString()}")
+        }
+    }
+
+    fun addAllUnderImport(fqName: FqName) {
+        if (!fqName.isRoot) {
+            myImports.add("import ${fqName.asString()}.*")
+        }
+    }
+
     public fun importsAsImportList(): JetImportList? {
         return JetPsiFactory(this).createFile(myImports.join("\n")).getImportList()
     }
@@ -130,11 +143,6 @@ public abstract class JetCodeFragment(
         val importListForContextElement = containingFile.getImportList()
         if (importListForContextElement != null) {
             myImports.addAll(importListForContextElement.getImports().map { it.getText() })
-        }
-
-        val packageName = containingFile.getPackageDirective()?.getFqName()?.asString()
-        if (packageName != null && packageName.isNotEmpty()) {
-            myImports.add("import $packageName.*")
         }
 
         if (imports != null && !imports.isEmpty()) {
