@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -28,4 +29,8 @@ public interface DeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext);
 
+}
+
+public interface BulkDeclarationChecker {
+    fun check(declarations: Collection<PsiElement>, diagnosticHolder: DiagnosticSink)
 }
