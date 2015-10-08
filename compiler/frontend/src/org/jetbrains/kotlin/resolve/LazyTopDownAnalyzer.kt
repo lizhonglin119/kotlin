@@ -47,9 +47,12 @@ public class LazyTopDownAnalyzer(
         private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
         private val fileScopeProvider: FileScopeProvider,
         private val declarationScopeProvider: DeclarationScopeProvider,
-        private val qualifiedExpressionResolver: QualifiedExpressionResolver
+        private val qualifiedExpressionResolver: QualifiedExpressionResolver,
+        private val escapedNameChecker: BulkDeclarationChecker
 ) {
     public fun analyzeDeclarations(topDownAnalysisMode: TopDownAnalysisMode, declarations: Collection<PsiElement>, outerDataFlowInfo: DataFlowInfo): TopDownAnalysisContext {
+        escapedNameChecker.check(declarations, trace)
+
         val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo, declarationScopeProvider)
 
         val topLevelFqNames = HashMultimap.create<FqName, JetElement>()

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -63,6 +64,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
+import org.jetbrains.kotlin.utils.join
 
 public object JvmPlatformConfigurator : PlatformConfigurator(
         DynamicTypesSettings(),
@@ -101,6 +103,7 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
 
     override fun configure(container: StorageComponentContainer) {
         super.configure(container)
+        container.useImpl<JvmSimpleNameBacktickCheckerBulk>()
 
         container.useImpl<ReflectionAPICallChecker>()
     }
@@ -511,6 +514,64 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
             doIfNotNull(dataFlowValue, c) {
                 c.trace.report(Errors.UNNECESSARY_SAFE_CALL.on(c.call.getCallOperationNode()!!.getPsi(), receiverArgument.getType()))
             }
+        }
+    }
+}
+
+class JvmSimpleNameBacktickCheckerBulk : BulkDeclarationChecker {
+    companion object {
+        private val CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
+    }
+
+    fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {
+        if (identifier == null) return
+
+        val text = JetPsiUtil.unquoteIdentifier(identifier.text)
+        if (text.isEmpty()) {
+            diagnosticHolder.report(Errors.INVALID_CHARACTERS.on(identifier, "should not be empty"))
+        }
+        else if (text.any { it in CHARS }) {
+            diagnosticHolder.report(Errors.INVALID_CHARACTERS.on(identifier, "contains illegal characters: ${CHARS.intersect(text.toSet()).join("")}"))
+        }
+    }
+
+    fun checkNamed(declaration: JetNamedDeclaration, diagnosticHolder: DiagnosticSink) {
+        checkIdentifier(declaration.nameIdentifier, diagnosticHolder)
+    }
+
+    override fun check(declarations: Collection<PsiElement>, diagnosticHolder: DiagnosticSink) {
+        declarations.forEach { declaration ->
+            declaration.accept(object : JetVisitorVoid() {
+                private fun registerDeclarations(declarations: List<JetDeclaration>) {
+                    for (jetDeclaration in declarations) {
+                        jetDeclaration.accept(this)
+                    }
+                }
+
+                override fun visitJetFile(file: JetFile) {
+                    if (file.isScript) {
+                        // TODO Check for script?
+                    }
+                    else {
+                        val packageDirective = file.packageDirective
+                        assert(packageDirective != null) { "No package in a non-script file: " + file }
+
+                        packageDirective!!.accept(this)
+                        registerDeclarations(file.declarations)
+                    }
+                }
+
+                override fun visitPackageDirective(packageDirective: JetPackageDirective) {
+                    packageDirective.packageNames.forEach { it.accept(this) }
+                }
+
+                override fun visitJetElement(element: JetElement) {
+                    if (element is JetNamedDeclaration) {
+                        checkNamed(element, diagnosticHolder)
+                    }
+                    element.acceptChildren(this)
+                }
+            })
         }
     }
 }
