@@ -1057,7 +1057,6 @@ public class DescriptorResolver {
         if (getter != null) {
             Annotations getterAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
                     annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER),
-                    annotationSplitter.getOtherAnnotations(),
                     annotationResolver.resolveAnnotationsWithoutArguments(scope, getter.getModifierList(), trace)));
 
             JetType outType = propertyDescriptor.getType();
