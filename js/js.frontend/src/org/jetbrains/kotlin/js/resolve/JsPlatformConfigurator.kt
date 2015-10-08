@@ -35,13 +35,13 @@ public object JsPlatformConfigurator : PlatformConfigurator(
 ) {
     override fun configure(container: StorageComponentContainer) {
         super.configure(container)
-        container.useImpl<JsSimpleNameBacktickCheckerBulk>()
+        container.useImpl<JsSimpleNameBacktickChecker>()
 
         container.useImpl<JsCallChecker>()
     }
 }
 
-class JsSimpleNameBacktickCheckerBulk : BulkDeclarationChecker {
+class JsSimpleNameBacktickChecker : BulkDeclarationChecker {
     override fun check(declarations: Collection<PsiElement>, diagnosticHolder: DiagnosticSink) {}
 }
 

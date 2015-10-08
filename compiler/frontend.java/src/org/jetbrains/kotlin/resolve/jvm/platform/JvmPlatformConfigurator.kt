@@ -103,7 +103,7 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
 
     override fun configure(container: StorageComponentContainer) {
         super.configure(container)
-        container.useImpl<JvmSimpleNameBacktickCheckerBulk>()
+        container.useImpl<JvmSimpleNameBacktickChecker>()
 
         container.useImpl<ReflectionAPICallChecker>()
     }
@@ -518,7 +518,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
     }
 }
 
-class JvmSimpleNameBacktickCheckerBulk : BulkDeclarationChecker {
+class JvmSimpleNameBacktickChecker : BulkDeclarationChecker {
     companion object {
         private val CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
     }
