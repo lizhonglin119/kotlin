@@ -539,39 +539,39 @@ class JvmSimpleNameBacktickChecker : BulkDeclarationChecker {
         checkIdentifier(declaration.nameIdentifier, diagnosticHolder)
     }
 
-    override fun check(declarations: Collection<PsiElement>, diagnosticHolder: DiagnosticSink) {
-        declarations.forEach { declaration ->
-            declaration.accept(object : JetVisitorVoid() {
-                private fun registerDeclarations(declarations: List<JetDeclaration>) {
-                    for (jetDeclaration in declarations) {
-                        jetDeclaration.accept(this)
-                    }
-                }
-
-                override fun visitJetFile(file: JetFile) {
-                    if (file.isScript) {
-                        // TODO Check for script?
-                    }
-                    else {
-                        val packageDirective = file.packageDirective
-                        assert(packageDirective != null) { "No package in a non-script file: " + file }
-
-                        packageDirective!!.accept(this)
-                        registerDeclarations(file.declarations)
-                    }
-                }
-
-                override fun visitPackageDirective(packageDirective: JetPackageDirective) {
-                    packageDirective.packageNames.forEach { it.accept(this) }
-                }
-
-                override fun visitJetElement(element: JetElement) {
-                    if (element is JetNamedDeclaration) {
-                        checkNamed(element, diagnosticHolder)
-                    }
-                    element.acceptChildren(this)
-                }
-            })
+    inner private class CheckEscapedVisitor(val diagnosticHolder: DiagnosticSink) : JetVisitorVoid() {
+        private fun registerDeclarations(declarations: List<JetDeclaration>) {
+            for (jetDeclaration in declarations) {
+                jetDeclaration.accept(this)
+            }
         }
+
+        override fun visitJetFile(file: JetFile) {
+            if (file.isScript) {
+                // TODO Check for script?
+            } else {
+                val packageDirective = file.packageDirective
+                assert(packageDirective != null) { "No package in a non-script file: " + file }
+
+                packageDirective!!.accept(this)
+                registerDeclarations(file.declarations)
+            }
+        }
+
+        override fun visitPackageDirective(packageDirective: JetPackageDirective) {
+            packageDirective.packageNames.forEach { it.accept(this) }
+        }
+
+        override fun visitJetElement(element: JetElement) {
+            if (element is JetNamedDeclaration) {
+                checkNamed(element, diagnosticHolder)
+            }
+            element.acceptChildren(this)
+        }
+    }
+
+    override fun check(declarations: Collection<PsiElement>, diagnosticHolder: DiagnosticSink) {
+        val visitor = CheckEscapedVisitor(diagnosticHolder)
+        declarations.forEach { it.accept(visitor) }
     }
 }
