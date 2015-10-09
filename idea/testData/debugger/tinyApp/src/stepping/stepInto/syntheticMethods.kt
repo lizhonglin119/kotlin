@@ -44,5 +44,5 @@ class A {
     }
 }
 
-// STEP_INTO: 26
+// STEP_INTO: 23
 // SKIP_SYNTHETIC_METHODS: false
