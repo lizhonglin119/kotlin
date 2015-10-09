@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
@@ -672,11 +673,21 @@ public class DeclarationsChecker {
             assert propertyAccessorDescriptor != null : "No property accessor descriptor for " + property.getText();
             modifiersChecker.checkModifiersForDeclaration(accessor, propertyAccessorDescriptor);
         }
-        checkGetter(property, propertyDescriptor);
-        checkSetter(property, propertyDescriptor);
+        boolean isPublicAbstractVar =
+                propertyDescriptor.isVar()
+                && propertyDescriptor.getModality() == Modality.ABSTRACT
+                && propertyDescriptor.getVisibility().isPublicAPI();
+        checkGetter(property, propertyDescriptor, isPublicAbstractVar);
+        checkSetter(property, propertyDescriptor, isPublicAbstractVar);
     }
 
-    private void checkGetter(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
+    private void reportVisibilityModifierDiagnostics(Collection<PsiElement> tokens, DiagnosticFactory0<PsiElement> diagnostic) {
+        for (PsiElement token : tokens) {
+            trace.report(diagnostic.on(token));
+        }
+    }
+
+    private void checkGetter(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor, boolean isPublicAbstractVar) {
         JetPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         JetModifierList getterModifierList = getter != null ? getter.getModifierList() : null;
@@ -684,32 +695,33 @@ public class DeclarationsChecker {
             Map<JetModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(getterModifierList, Sets
                     .newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD,
                                 JetTokens.INTERNAL_KEYWORD));
-            if (getterDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
-                for (PsiElement token : tokens.values()) {
-                    trace.report(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.on(token));
-                }
+            if (isPublicAbstractVar && !getterDescriptor.getVisibility().isPublicAPI()) {
+                reportVisibilityModifierDiagnostics(tokens.values(), Errors.ACCESSOR_VISIBILITY_FOR_PUBLIC_ABSTRACT_VAR);
+            }
+            else if (getterDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
+                reportVisibilityModifierDiagnostics(tokens.values(), Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY);
             }
             else {
-                for (PsiElement token : tokens.values()) {
-                    trace.report(Errors.REDUNDANT_MODIFIER_IN_GETTER.on(token));
-                }
+                reportVisibilityModifierDiagnostics(tokens.values(), Errors.REDUNDANT_MODIFIER_IN_GETTER);
             }
         }
     }
 
-    private void checkSetter(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
+    private void checkSetter(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor, boolean isPublicAbstractVar) {
         JetPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
         JetModifierList setterModifierList = setter != null ? setter.getModifierList() : null;
         if (setterModifierList != null && setterDescriptor != null) {
-            Map<JetModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(
-                    setterModifierList, Collections.singleton(JetTokens.PRIVATE_KEYWORD));
-            if (setterDescriptor.getVisibility() == Visibilities.PRIVATE
+            Map<JetModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(setterModifierList, Sets
+                    .newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD,
+                                JetTokens.INTERNAL_KEYWORD));
+            if (isPublicAbstractVar && !setterDescriptor.getVisibility().isPublicAPI()) {
+                reportVisibilityModifierDiagnostics(tokens.values(), Errors.ACCESSOR_VISIBILITY_FOR_PUBLIC_ABSTRACT_VAR);
+            }
+            else if (setterDescriptor.getVisibility() == Visibilities.PRIVATE
                 && propertyDescriptor.getVisibility() != Visibilities.PRIVATE
                 && propertyDescriptor.isLateInit()) {
-                for (PsiElement token : tokens.values()) {
-                    trace.report(Errors.PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR.on(token));
-                }
+                reportVisibilityModifierDiagnostics(tokens.values(), Errors.PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR);
             }
         }
     }
