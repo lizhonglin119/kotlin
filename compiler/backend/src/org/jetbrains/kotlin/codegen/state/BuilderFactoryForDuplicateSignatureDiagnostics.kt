@@ -19,20 +19,22 @@ package org.jetbrains.kotlin.codegen.state
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.SignatureCollectingClassBuilderFactory
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
-import java.util.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
+import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaStaticClassScope
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
 private val EXTERNAL_SOURCES_KINDS = arrayOf(
         JvmDeclarationOriginKind.DELEGATION_TO_DEFAULT_IMPLS,
@@ -95,14 +97,14 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
             if (origins.size() <= 1) continue
 
             var memberElement: PsiElement? = null
-            var nonFakeCount = 0
+            var ownNonFakeCount = 0
             for (origin in origins) {
                 val member = origin.descriptor as? CallableMemberDescriptor?
-                if (member != null && member.getKind() != FAKE_OVERRIDE) {
-                    nonFakeCount++
+                if (member != null && member.containingDeclaration == classOrigin.descriptor && member.getKind() != FAKE_OVERRIDE) {
+                    ownNonFakeCount++
                     // If there's more than one real element, the clashing signature is already reported.
                     // Only clashes between fake overrides are interesting here
-                    if (nonFakeCount > 1) continue@signatures
+                    if (ownNonFakeCount > 1) continue@signatures
 
                     if (member.getKind() != DELEGATION) {
                         // Delegates don't have declarations in the code
@@ -147,8 +149,31 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
             processMember(member)
         }
 
+        val staticDescriptors = descriptor.getStaticDescriptors()
+        for (member in staticDescriptors) {
+            processMember(member)
+        }
+
         return groupedBySignature
     }
+
+    private fun ClassDescriptor.getStaticDescriptors(): Collection<DeclarationDescriptor> {
+
+        fun getStaticDescriptors(supertype: JetType): Collection<DeclarationDescriptor> {
+            val superTypeDescriptor = supertype.constructor.declarationDescriptor as? ClassDescriptor ?: return emptyList()
+
+            val staticScope = superTypeDescriptor.staticScope
+
+            if (staticScope !is LazyJavaStaticClassScope) return superTypeDescriptor.getStaticDescriptors()
+
+            return staticScope.getDescriptors()
+        }
+
+        if (staticScope is LazyJavaStaticClassScope) return this.staticScope.getDescriptors()
+
+        return typeConstructor.supertypes.flatMap(::getStaticDescriptors)
+    }
+
 
     public fun isOrOverridesSamAdapter(descriptor: CallableMemberDescriptor): Boolean {
         if (descriptor is SamAdapterDescriptor<*>) return true
