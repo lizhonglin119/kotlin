@@ -55,7 +55,8 @@ public inline operator fun <T> List<T>.component5(): T {
 /**
  * Returns `true` if [element] is found in the collection.
  */
-public operator fun <T> Iterable<T>.contains(element: T): Boolean {
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+public operator fun <T> Iterable<T>.contains(element: @NoInfer T): Boolean {
     if (this is Collection)
         return contains(element)
     return indexOf(element) >= 0
