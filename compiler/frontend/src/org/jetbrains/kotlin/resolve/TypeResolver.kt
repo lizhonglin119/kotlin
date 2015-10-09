@@ -51,7 +51,8 @@ public class TypeResolver(
         private val storageManager: StorageManager,
         private val lazinessToken: TypeLazinessToken,
         private val dynamicTypesSettings: DynamicTypesSettings,
-        private val dynamicCallableDescriptors: DynamicCallableDescriptors
+        private val dynamicCallableDescriptors: DynamicCallableDescriptors,
+        private val identifierChecker: IdentifierChecker
 ) {
 
     public open class FlexibleTypeCapabilitiesProvider {
@@ -237,6 +238,7 @@ public class TypeResolver(
 
             override fun visitFunctionType(type: JetFunctionType) {
                 val receiverTypeRef = type.getReceiverTypeReference()
+                type.parameters.forEach { identifierChecker.checkDeclaration(it, c.trace) }
                 val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
 
                 val parameterTypes = type.getParameters().map { resolveType(c.noBareTypes(), it.getTypeReference()!!) }

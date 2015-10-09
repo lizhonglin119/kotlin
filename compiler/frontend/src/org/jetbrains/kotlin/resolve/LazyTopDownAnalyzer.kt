@@ -48,10 +48,9 @@ public class LazyTopDownAnalyzer(
         private val fileScopeProvider: FileScopeProvider,
         private val declarationScopeProvider: DeclarationScopeProvider,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
-        private val escapedNameChecker: BulkDeclarationChecker
+        private val identifierChecker: IdentifierChecker
 ) {
     public fun analyzeDeclarations(topDownAnalysisMode: TopDownAnalysisMode, declarations: Collection<PsiElement>, outerDataFlowInfo: DataFlowInfo): TopDownAnalysisContext {
-        escapedNameChecker.check(declarations, trace)
 
         val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo, declarationScopeProvider)
 
@@ -96,6 +95,7 @@ public class LazyTopDownAnalyzer(
                 }
 
                 override fun visitPackageDirective(directive: JetPackageDirective) {
+                    directive.packageNames.forEach { identifierChecker.checkIdentifier(it.getIdentifier(), trace) }
                     qualifiedExpressionResolver.resolvePackageHeader(directive, moduleDescriptor, trace)
                 }
 
@@ -105,6 +105,7 @@ public class LazyTopDownAnalyzer(
                 }
 
                 override fun visitClassOrObject(classOrObject: JetClassOrObject) {
+                    //declarationChecker.checkDeclaration(classOrObject, trace)
                     val location = if (classOrObject.isTopLevel()) KotlinLookupLocation(classOrObject) else NoLookupLocation.WHEN_RESOLVE_DECLARATION
                     val descriptor = lazyDeclarationResolver.getClassDescriptor(classOrObject, location) as ClassDescriptorWithResolutionScopes
 
@@ -174,10 +175,12 @@ public class LazyTopDownAnalyzer(
                 }
 
                 override fun visitNamedFunction(function: JetNamedFunction) {
+                    //declarationChecker.checkNamed(function, trace)
                     functions.add(function)
                 }
 
                 override fun visitProperty(property: JetProperty) {
+                    //declarationChecker.checkNamed(property, trace)
                     properties.add(property)
                 }
             })

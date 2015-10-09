@@ -43,16 +43,19 @@ public class DeclarationsChecker {
     @NotNull private final ModifiersChecker.ModifiersCheckingProcedure modifiersChecker;
     @NotNull private final DescriptorResolver descriptorResolver;
     @NotNull private final AnnotationChecker annotationChecker;
+    @NotNull private final IdentifierChecker identifierChecker;
 
     public DeclarationsChecker(
             @NotNull DescriptorResolver descriptorResolver,
             @NotNull ModifiersChecker modifiersChecker,
             @NotNull AnnotationChecker annotationChecker,
+            @NotNull IdentifierChecker identifierChecker,
             @NotNull BindingTrace trace
     ) {
         this.descriptorResolver = descriptorResolver;
         this.modifiersChecker = modifiersChecker.withTrace(trace);
         this.annotationChecker = annotationChecker;
+        this.identifierChecker = identifierChecker;
         this.trace = trace;
     }
 
@@ -83,6 +86,7 @@ public class DeclarationsChecker {
             checkPrimaryConstructor(classOrObject, classDescriptor);
 
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor);
+            identifierChecker.checkDeclaration(classOrObject, trace);
             checkClassExposedType(classOrObject, classDescriptor);
         }
 
@@ -93,6 +97,7 @@ public class DeclarationsChecker {
 
             checkFunction(function, functionDescriptor);
             modifiersChecker.checkModifiersForDeclaration(function, functionDescriptor);
+            identifierChecker.checkDeclaration(function, trace);
         }
 
         Map<JetProperty, PropertyDescriptor> properties = bodiesResolveContext.getProperties();
@@ -102,6 +107,7 @@ public class DeclarationsChecker {
 
             checkProperty(property, propertyDescriptor);
             modifiersChecker.checkModifiersForDeclaration(property, propertyDescriptor);
+            identifierChecker.checkDeclaration(property, trace);
         }
 
         for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : bodiesResolveContext.getSecondaryConstructors().entrySet()) {
@@ -114,6 +120,7 @@ public class DeclarationsChecker {
 
     private void checkConstructorDeclaration(ConstructorDescriptor constructorDescriptor, JetDeclaration declaration) {
         modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor);
+        identifierChecker.checkDeclaration(declaration, trace);
     }
 
     private void checkModifiersAndAnnotationsInPackageDirective(JetFile file) {
@@ -671,6 +678,7 @@ public class DeclarationsChecker {
             PropertyAccessorDescriptor propertyAccessorDescriptor = accessor.isGetter() ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
             assert propertyAccessorDescriptor != null : "No property accessor descriptor for " + property.getText();
             modifiersChecker.checkModifiersForDeclaration(accessor, propertyAccessorDescriptor);
+            identifierChecker.checkDeclaration(accessor, trace);
         }
         JetPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();

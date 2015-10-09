@@ -518,12 +518,12 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
     }
 }
 
-class JvmSimpleNameBacktickChecker : BulkDeclarationChecker {
+class JvmSimpleNameBacktickChecker : IdentifierChecker {
     companion object {
         private val CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
     }
 
-    fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {
+    override fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {
         if (identifier == null) return
 
         val text = JetPsiUtil.unquoteIdentifier(identifier.text)
@@ -539,39 +539,18 @@ class JvmSimpleNameBacktickChecker : BulkDeclarationChecker {
         checkIdentifier(declaration.nameIdentifier, diagnosticHolder)
     }
 
-    inner private class CheckEscapedVisitor(val diagnosticHolder: DiagnosticSink) : JetVisitorVoid() {
-        private fun registerDeclarations(declarations: List<JetDeclaration>) {
-            for (jetDeclaration in declarations) {
-                jetDeclaration.accept(this)
-            }
+    override fun checkDeclaration(declaration: JetDeclaration, diagnosticHolder: DiagnosticSink) {
+        if (declaration is JetMultiDeclaration) {
+            declaration.entries.forEach { checkNamed(it, diagnosticHolder) }
         }
-
-        override fun visitJetFile(file: JetFile) {
-            if (file.isScript) {
-                // TODO Check for script?
-            } else {
-                val packageDirective = file.packageDirective
-                assert(packageDirective != null) { "No package in a non-script file: " + file }
-
-                packageDirective!!.accept(this)
-                registerDeclarations(file.declarations)
-            }
+        if (declaration is JetCallableDeclaration) {
+            declaration.valueParameters.forEach { checkNamed(it, diagnosticHolder) }
         }
-
-        override fun visitPackageDirective(packageDirective: JetPackageDirective) {
-            packageDirective.packageNames.forEach { it.accept(this) }
+        if (declaration is JetTypeParameterListOwner) {
+            declaration.typeParameters.forEach { checkNamed(it, diagnosticHolder) }
         }
-
-        override fun visitJetElement(element: JetElement) {
-            if (element is JetNamedDeclaration) {
-                checkNamed(element, diagnosticHolder)
-            }
-            element.acceptChildren(this)
+        if (declaration is JetNamedDeclaration) {
+            checkNamed(declaration, diagnosticHolder)
         }
-    }
-
-    override fun check(declarations: Collection<PsiElement>, diagnosticHolder: DiagnosticSink) {
-        val visitor = CheckEscapedVisitor(diagnosticHolder)
-        declarations.forEach { it.accept(visitor) }
     }
 }

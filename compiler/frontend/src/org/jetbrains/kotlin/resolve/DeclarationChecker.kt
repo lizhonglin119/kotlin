@@ -31,6 +31,7 @@ public interface DeclarationChecker {
 
 }
 
-public interface BulkDeclarationChecker {
-    fun check(declarations: Collection<PsiElement>, diagnosticHolder: DiagnosticSink)
+public interface IdentifierChecker {
+    fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink)
+    fun checkDeclaration(declaration: JetDeclaration, diagnosticHolder: DiagnosticSink)
 }

@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker
-import org.jetbrains.kotlin.resolve.BulkDeclarationChecker
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.resolve.IdentifierChecker
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
@@ -41,7 +42,8 @@ public object JsPlatformConfigurator : PlatformConfigurator(
     }
 }
 
-class JsSimpleNameBacktickChecker : BulkDeclarationChecker {
-    override fun check(declarations: Collection<PsiElement>, diagnosticHolder: DiagnosticSink) {}
+class JsSimpleNameBacktickChecker : IdentifierChecker {
+    override fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {}
+    override fun checkDeclaration(declaration: JetDeclaration, diagnosticHolder: DiagnosticSink) {}
 }
 
