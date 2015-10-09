@@ -164,7 +164,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         }
 
     fun JetType.isProper() = !TypeUtils.containsSpecialType(this) {
-        type -> type.getConstructor().getDeclarationDescriptor() in getAllTypeVariables()
+        type -> type.constructor.declarationDescriptor as? TypeParameterDescriptor in getAllTypeVariables()
     }
 
     fun JetType.getNestedTypeVariables(original: Boolean = true): List<TypeParameterDescriptor> {

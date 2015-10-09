@@ -52,11 +52,35 @@ public inline operator fun <T> List<T>.component5(): T {
     return get(4)
 }
 
+///**
+// * Returns `true` if [element] is found in the collection.
+// */
+//@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+//public operator fun <T: Any> Iterable<T>.contains(element: @NoInfer T): Boolean {
+//    if (this is Collection)
+//        return contains(element)
+//    return indexOf(element) >= 0
+//}
+
+/**
+ * Returns `true` if [element] is not null and is found in the collection.
+ */
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@kotlin.jvm.JvmName("containsNullable")
+public operator fun <T: Any> Iterable<T>.contains(element: @NoInfer T?): Boolean {
+    if (element == null)
+        return false
+    if (this is Collection)
+        return contains(element)
+    return indexOf(element) >= 0
+}
+
 /**
  * Returns `true` if [element] is found in the collection.
  */
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-public operator fun <T> Iterable<T>.contains(element: @NoInfer T): Boolean {
+@kotlin.jvm.JvmName("ofNullableContainsNullable")
+public operator fun <T: Any> Iterable<T?>.contains(element: @NoInfer T?): Boolean {
     if (this is Collection)
         return contains(element)
     return indexOf(element) >= 0
