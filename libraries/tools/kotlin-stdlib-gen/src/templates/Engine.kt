@@ -413,6 +413,9 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
 }
 
+infix fun MutableList<GenericFunction>.add(item: GenericFunction) = add(item)
+infix fun MutableList<GenericFunction>.addAll(items: Iterable<GenericFunction>) = this.addAll(iterable = items)
+
 fun f(signature: String, init: GenericFunction.() -> Unit): GenericFunction {
     val gf = GenericFunction(signature)
     gf.init()
