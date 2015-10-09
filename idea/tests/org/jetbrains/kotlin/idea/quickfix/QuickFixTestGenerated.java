@@ -4397,6 +4397,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("infixModifier.kt")
+        public void testInfixModifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/infixModifier.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nestedClassNotAllowed.kt")
         public void testNestedClassNotAllowed() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/nestedClassNotAllowed.kt");
@@ -6677,27 +6683,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("valWithSetter.kt")
             public void testValWithSetter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeMutability/valWithSetter.kt");
-                doTest(fileName);
-            }
-        }
-
-        @TestMetadata("idea/testData/quickfix/variables/changeToBackingField")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ChangeToBackingField extends AbstractQuickFixTest {
-            public void testAllFilesPresentInChangeToBackingField() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeToBackingField"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-            }
-
-            @TestMetadata("bFRequired.kt")
-            public void testBFRequired() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToBackingField/bFRequired.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt510.kt")
-            public void testKt510() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToBackingField/kt510.kt");
                 doTest(fileName);
             }
         }

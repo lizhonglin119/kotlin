@@ -778,12 +778,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("dontGenerateBodyInTrait.kt")
-        public void testDontGenerateBodyInTrait() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/dontGenerateBodyInTrait.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("implementationInTrait.kt")
         public void testImplementationInTrait() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/implementationInTrait.kt");
@@ -5662,12 +5656,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt640.kt")
-        public void testKt640() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/kt640.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("kt694.kt")
         public void testKt694() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/kt694.kt");
@@ -7438,12 +7426,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("unqualifiedSuperWithLocalClass.kt")
-        public void testUnqualifiedSuperWithLocalClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/super/unqualifiedSuperWithLocalClass.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("unqualifiedSuperWithMethodsOfAny.kt")
         public void testUnqualifiedSuperWithMethodsOfAny() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/super/unqualifiedSuperWithMethodsOfAny.kt");
@@ -7687,12 +7669,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt5495.kt")
-        public void testKt5495() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt5495.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("multiple.kt")
         public void testMultiple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/multiple.kt");
@@ -7765,12 +7741,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt2811.kt")
         public void testKt2811() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/typeInfo/kt2811.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("kt511.kt")
-        public void testKt511() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/typeInfo/kt511.kt");
             doTest(fileName);
         }
 

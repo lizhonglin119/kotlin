@@ -169,8 +169,8 @@ public class DefaultErrorMessages {
         MAP.put(INACCESSIBLE_BACKING_FIELD, "The backing field is not accessible here");
         MAP.put(NOT_PROPERTY_BACKING_FIELD, "The referenced variable is not a property and doesn't have backing field");
 
-        MAP.put(BACKING_FIELD_SYNTAX_DEPRECATED, "This backing field syntax is deprecated, use 'field' instead");
-        MAP.put(BACKING_FIELD_USAGE_DEPRECATED, "Backing field usage is deprecated here, soon it will be possible only in property accessors");
+        MAP.put(BACKING_FIELD_OLD_SYNTAX, "This backing field syntax is forbidden, use 'field' instead");
+        MAP.put(BACKING_FIELD_USAGE_FORBIDDEN, "Backing field usage is forbidden here");
 
         MAP.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS, "Mixing named and positioned arguments is not allowed");
         MAP.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter");
@@ -280,9 +280,9 @@ public class DefaultErrorMessages {
         MAP.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING);
 
         MAP.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER,
-                "This property has a custom setter, so initialization using backing field required", NAME);
+                "This property cannot be initialized inside ''init'' block because it has a custom setter", NAME);
         MAP.put(INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER,
-                "Setter of this property can be overridden, so initialization using backing field required", NAME);
+                "This property cannot be initialized inside ''init'' block because it has an open setter", NAME);
 
         MAP.put(UNREACHABLE_CODE, "Unreachable code", TO_STRING);
 
@@ -292,6 +292,7 @@ public class DefaultErrorMessages {
         MAP.put(DEPRECATED_SYMBOL_WITH_MESSAGE, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
+        MAP.put(LOCAL_INTERFACE_NOT_ALLOWED, "''{0}'' is an interface so it cannot be local. Try to use anonymous object or abstract class instead", NAME);
         MAP.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated");
         MAP.put(SEALED_CLASS_CONSTRUCTOR_CALL, "Sealed types cannot be instantiated");
 

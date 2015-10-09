@@ -325,6 +325,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("localInterfaces.kt")
+        public void testLocalInterfaces() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/localInterfaces.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("MultilineStringTemplates.kt")
         public void testMultilineStringTemplates() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/MultilineStringTemplates.kt");
@@ -1458,12 +1464,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("kt462BackingFieldsResolve.kt")
-            public void testKt462BackingFieldsResolve() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/kt462BackingFieldsResolve.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("kt782packageLevel.kt")
             public void testKt782packageLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/kt782packageLevel.kt");
@@ -1473,36 +1473,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("qualifiedWithThis.kt")
             public void testQualifiedWithThis() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/qualifiedWithThis.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ReadForwardInAnonymous.kt")
-            public void testReadForwardInAnonymous() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ReadForwardInAnonymous.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ReadForwardInPropertyInitializer.kt")
-            public void testReadForwardInPropertyInitializer() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ReadForwardInPropertyInitializer.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ReadInAnonymous.kt")
-            public void testReadInAnonymous() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ReadInAnonymous.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ReadInAnotherPropertyIntializer.kt")
-            public void testReadInAnotherPropertyIntializer() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ReadInAnotherPropertyIntializer.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ReadInFunction.kt")
-            public void testReadInFunction() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ReadInFunction.kt");
                 doTest(fileName);
             }
 
@@ -12849,12 +12819,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt37.kt")
             public void testKt37() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/kt37.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt421Scopes.kt")
-            public void testKt421Scopes() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/kt421Scopes.kt");
                 doTest(fileName);
             }
 
