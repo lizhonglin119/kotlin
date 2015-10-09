@@ -829,9 +829,6 @@ public class DescriptorResolver {
             boolean notLocal,
             @NotNull final BindingTrace trace
     ) {
-        if (notLocal) {
-            PreliminaryDeclarationVisitor.Companion.visitDeclaration(variable, variableDescriptor, trace);
-        }
         JetTypeReference propertyTypeRef = variable.getTypeReference();
 
         boolean hasDelegate = variable instanceof JetProperty && ((JetProperty) variable).hasDelegateExpression();
@@ -865,6 +862,7 @@ public class DescriptorResolver {
                             new Function0<JetType>() {
                                 @Override
                                 public JetType invoke() {
+                                    PreliminaryDeclarationVisitor.Companion.visitDeclaration(variable, variableDescriptor, trace);
                                     JetType initializerType = resolveInitializerType(scope, variable.getInitializer(), dataFlowInfo, trace);
                                     setConstantForVariableIfNeeded(variableDescriptor, scope, variable, dataFlowInfo, initializerType, trace);
                                     return transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace);
