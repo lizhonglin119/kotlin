@@ -566,9 +566,9 @@ public class BodyResolver {
             @NotNull JetProperty property,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
+        PreliminaryDeclarationVisitor.Companion.visitDeclaration(property, propertyDescriptor, trace);
         computeDeferredType(propertyDescriptor.getReturnType());
 
-        PreliminaryDeclarationVisitor.Companion.visitDeclaration(property, propertyDescriptor, trace);
         JetExpression initializer = property.getInitializer();
         LexicalScope propertyScope = getScopeForProperty(c, property);
         if (parentScope == null) {

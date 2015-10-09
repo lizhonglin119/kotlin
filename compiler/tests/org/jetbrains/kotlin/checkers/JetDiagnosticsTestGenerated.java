@@ -14591,6 +14591,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("inPropertySam.kt")
+                public void testInPropertySam() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/variables/inPropertySam.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inScript.kt")
                 public void testInScript() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/variables/inScript.kt");
