@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
+import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
 
 import java.util.*;
 
@@ -828,6 +829,9 @@ public class DescriptorResolver {
             boolean notLocal,
             @NotNull final BindingTrace trace
     ) {
+        if (notLocal) {
+            PreliminaryDeclarationVisitor.Companion.visitDeclaration(variable, variableDescriptor, trace);
+        }
         JetTypeReference propertyTypeRef = variable.getTypeReference();
 
         boolean hasDelegate = variable instanceof JetProperty && ((JetProperty) variable).hasDelegateExpression();
