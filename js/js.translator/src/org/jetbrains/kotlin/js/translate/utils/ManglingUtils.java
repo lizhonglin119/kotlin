@@ -176,7 +176,7 @@ public class ManglingUtils {
         if (jetScope != null) {
             final String finalNameToCompare = nameToCompare;
 
-            Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(DescriptorKindFilter.CALLABLES, JetScope.ALL_NAME_FILTER);
+            Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(DescriptorKindFilter.CALLABLES, JetScope.Companion.getALL_NAME_FILTER());
             List<CallableDescriptor> overloadedFunctions =
                     CollectionsKt.flatMap(declarations, new Function1<DeclarationDescriptor, Iterable<? extends CallableDescriptor>>() {
                 @Override
@@ -187,7 +187,7 @@ public class ManglingUtils {
 
                         if (!hasPrimaryConstructor(classDescriptor)) {
                             ConstructorDescriptorImpl fakePrimaryConstructor =
-                                    ConstructorDescriptorImpl.create(classDescriptor, Annotations.EMPTY, true, SourceElement.NO_SOURCE);
+                                    ConstructorDescriptorImpl.create(classDescriptor, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
                             return CollectionsKt.plus(constructors, fakePrimaryConstructor);
                         }
 

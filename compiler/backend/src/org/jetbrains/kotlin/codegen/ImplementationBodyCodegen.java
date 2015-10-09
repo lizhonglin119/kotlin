@@ -984,18 +984,30 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForSingleton() {
-        if (isEnumEntry(descriptor) || isCompanionObject(descriptor)) return;
+        if (isEnumEntry(descriptor)) return;
 
-        if (isNonCompanionObject(descriptor)) {
+        if (isObject(descriptor)) {
             StackValue.Field field = StackValue.singleton(descriptor, typeMapper);
             v.newField(OtherOrigin(myClass), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
+
+            if (isNonCompanionObject(descriptor)) {
+                StackValue.Field oldField = StackValue.oldSingleton(descriptor, typeMapper);
+                v.newField(OtherOrigin(myClass), ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_DEPRECATED, oldField.name, oldField.type.getDescriptor(), null, null);
+            }
 
             if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
             // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
+            markLineNumberForSyntheticFunction(descriptor, v);
             v.anew(classAsmType);
             v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
+            if (isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+                //We should load containing class to initialize companion fields
+                StackValue companion = StackValue.singletonForCompanion(descriptor, typeMapper);
+                companion.put(companion.type, v);
+                AsmUtil.pop(v, companion.type);
+            }
             return;
         }
 
@@ -1007,7 +1019,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         JetObjectDeclaration companionObject = CollectionsKt.firstOrNull(((JetClass) myClass).getCompanionObjects());
         assert companionObject != null : "Companion object not found: " + myClass.getText();
 
-        StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
+        StackValue.Field field = StackValue.singletonForCompanion(companionObjectDescriptor, typeMapper);
         v.newField(OtherOrigin(companionObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
 
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
@@ -1065,13 +1077,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateCompanionObjectInitializer(@NotNull ClassDescriptor companionObject) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
-        FunctionDescriptor constructor = (FunctionDescriptor) context.accessibleDescriptor(
-                CollectionsKt.single(companionObject.getConstructors()), /* superCallExpression = */ null
-        );
-        generateMethodCallTo(constructor, null, codegen.v);
-        codegen.v.dup();
-        StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));
-        StackValue.singleton(companionObject, typeMapper).store(instance, codegen.v, true);
+        StackValue.singletonForCompanion(companionObject, typeMapper)
+                .store(StackValue.singleton(companionObject, typeMapper), codegen.v, true);
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
@@ -1138,8 +1145,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor,
                                            getDelegationConstructorCall(bindingContext, constructorDescriptor));
 
-        if (isNonCompanionObject(descriptor)) {
+        if (isObject(descriptor)) {
             StackValue.singleton(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
+            if (isNonCompanionObject(descriptor)) {
+                StackValue.oldSingleton(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
+            }
         }
 
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {

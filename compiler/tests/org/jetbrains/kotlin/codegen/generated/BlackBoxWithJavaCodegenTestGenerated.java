@@ -53,6 +53,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("deprecatedFieldForObject")
+    public void testDeprecatedFieldForObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/deprecatedFieldForObject/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("inline")
     public void testInline() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/inline/");
@@ -160,6 +166,28 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("javaTypeIsFunK")
         public void testJavaTypeIsFunK() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/casts/javaTypeIsFunK/");
+            doTestWithJava(fileName);
+        }
+
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithJava/collections")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Collections extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInCollections() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/collections"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("mutableList")
+        public void testMutableList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/mutableList/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("strList")
+        public void testStrList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/strList/");
             doTestWithJava(fileName);
         }
 
