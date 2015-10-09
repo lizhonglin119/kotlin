@@ -672,6 +672,11 @@ public class DeclarationsChecker {
             assert propertyAccessorDescriptor != null : "No property accessor descriptor for " + property.getText();
             modifiersChecker.checkModifiersForDeclaration(accessor, propertyAccessorDescriptor);
         }
+        checkGetter(property, propertyDescriptor);
+        checkSetter(property, propertyDescriptor);
+    }
+
+    private void checkGetter(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         JetPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         JetModifierList getterModifierList = getter != null ? getter.getModifierList() : null;
@@ -687,6 +692,23 @@ public class DeclarationsChecker {
             else {
                 for (PsiElement token : tokens.values()) {
                     trace.report(Errors.REDUNDANT_MODIFIER_IN_GETTER.on(token));
+                }
+            }
+        }
+    }
+
+    private void checkSetter(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
+        JetPropertyAccessor setter = property.getSetter();
+        PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
+        JetModifierList setterModifierList = setter != null ? setter.getModifierList() : null;
+        if (setterModifierList != null && setterDescriptor != null) {
+            Map<JetModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(
+                    setterModifierList, Collections.singleton(JetTokens.PRIVATE_KEYWORD));
+            if (setterDescriptor.getVisibility() == Visibilities.PRIVATE
+                && propertyDescriptor.getVisibility() != Visibilities.PRIVATE
+                && propertyDescriptor.isLateInit()) {
+                for (PsiElement token : tokens.values()) {
+                    trace.report(Errors.PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR.on(token));
                 }
             }
         }
