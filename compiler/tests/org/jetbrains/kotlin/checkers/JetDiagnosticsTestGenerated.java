@@ -181,6 +181,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DeprecatedGetSetPropertyDelegateConvention.kt")
+        public void testDeprecatedGetSetPropertyDelegateConvention() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/DeprecatedGetSetPropertyDelegateConvention.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DeprecatedUnaryOperatorConventions.kt")
+        public void testDeprecatedUnaryOperatorConventions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/DeprecatedUnaryOperatorConventions.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DiamondFunction.kt")
         public void testDiamondFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/DiamondFunction.kt");
