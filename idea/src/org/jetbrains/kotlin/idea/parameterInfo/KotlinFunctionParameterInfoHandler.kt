@@ -20,6 +20,7 @@ import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.parameterInfo.*
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.Gray
@@ -97,7 +98,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
         val argument = element.parents.takeWhile { it != argumentList }.lastOrNull()
         if (argument != null && !argumentClass.java.isInstance(argument)) {
             val arguments = getActualParameters(argumentList)
-            val index = arguments.indexOf(element)
+            val index = (arguments as Array<out PsiElement>).indexOf(element)
             context.setCurrentParameter(index)
             context.setHighlightedParameter(element)
         }
