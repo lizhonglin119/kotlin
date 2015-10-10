@@ -376,8 +376,8 @@ public inline operator fun ShortArray.component5(): Short {
  * Returns `true` if [element] is found in the collection.
  */
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-public operator fun <T> Array<out T>.contains(element: @NoInfer T): Boolean {
-    return indexOf(element) >= 0
+public operator fun <T, E> Array<out @Exact T>.contains(element: @Exact E): Boolean where T: E {
+    return (this as Array<out E>).indexOf(element) >= 0
 }
 
 /**

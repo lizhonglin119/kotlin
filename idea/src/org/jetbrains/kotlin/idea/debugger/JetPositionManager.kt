@@ -387,7 +387,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         private fun getElementToCalculateClassName(notPositionedElement: PsiElement?): JetElement? {
             val types = TYPES_TO_CALCULATE_CLASSNAME // bug in smartcast: Array cannot be used later in original type after as
-            if (notPositionedElement?.javaClass in (TYPES_TO_CALCULATE_CLASSNAME as Array<out Class<out PsiElement>>)) return notPositionedElement as JetElement
+            if ((notPositionedElement?.javaClass as Class<*>) in TYPES_TO_CALCULATE_CLASSNAME) return notPositionedElement as JetElement
 
             return PsiTreeUtil.getParentOfType(notPositionedElement, *types)
         }
