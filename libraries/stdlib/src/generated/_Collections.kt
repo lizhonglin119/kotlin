@@ -265,7 +265,8 @@ public fun <T> List<T>.getOrNull(index: Int): T? {
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-public fun <T> Iterable<T>.indexOf(element: T): Int {
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+public fun <T> Iterable<T>.indexOf(element: @NoInfer T): Int {
     var index = 0
     for (item in this) {
         if (element == item)
@@ -394,7 +395,8 @@ public inline fun <T> List<T>.last(predicate: (T) -> Boolean): T {
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+public fun <T> Iterable<T>.lastIndexOf(element: @NoInfer T): Int {
     var lastIndex = -1
     var index = 0
     for (item in this) {
