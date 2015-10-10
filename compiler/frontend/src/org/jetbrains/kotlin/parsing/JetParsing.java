@@ -196,7 +196,7 @@ public class JetParsing extends AbstractJetParsing {
          *   ;
          */
         PsiBuilder.Marker packageDirective = mark();
-        parseModifierList(ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
+        parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
         if (at(PACKAGE_KEYWORD)) {
             advance(); // PACKAGE_KEYWORD
@@ -391,7 +391,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker decl = mark();
 
         ModifierDetector detector = new ModifierDetector();
-        parseModifierList(detector, ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
+        parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
         IElementType keywordToken = tt();
         IElementType declType = null;
