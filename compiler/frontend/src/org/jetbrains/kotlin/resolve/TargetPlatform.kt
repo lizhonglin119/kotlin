@@ -16,13 +16,16 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.validation.*
 import org.jetbrains.kotlin.storage.StorageManager
@@ -43,7 +46,7 @@ abstract class TargetPlatform(
         override val builtIns: KotlinBuiltIns
             get() = DefaultBuiltIns.Instance
         override val defaultModuleParameters = ModuleParameters.Empty
-        override val platformConfigurator = PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf())
+        override val platformConfigurator = PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(), DefaultIdentifierChecker)
     }
 }
 
@@ -65,7 +68,8 @@ open class PlatformConfigurator(
         additionalCallCheckers: List<CallChecker>,
         additionalTypeCheckers: List<AdditionalTypeChecker>,
         additionalSymbolUsageValidators: List<SymbolUsageValidator>,
-        private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>
+        private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
+        private val identifierChecker: IdentifierChecker
 ) {
 
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
@@ -81,6 +85,7 @@ open class PlatformConfigurator(
             typeCheckers.forEach { useInstance(it) }
             useInstance(symbolUsageValidator)
             additionalAnnotationCheckers.forEach { useInstance(it) }
+            useInstance(identifierChecker)
         }
     }
 }
@@ -90,3 +95,8 @@ fun TargetPlatform.createModule(
         storageManager: StorageManager
 ) = ModuleDescriptorImpl(name, storageManager, defaultModuleParameters, builtIns)
 
+
+object DefaultIdentifierChecker : IdentifierChecker {
+    override fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {}
+    override fun checkDeclaration(declaration: JetDeclaration, diagnosticHolder: DiagnosticSink) {}
+}

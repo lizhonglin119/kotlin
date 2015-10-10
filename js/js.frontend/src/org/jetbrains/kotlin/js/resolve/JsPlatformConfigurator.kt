@@ -16,13 +16,10 @@
 
 package org.jetbrains.kotlin.js.resolve
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.resolve.IdentifierChecker
+import org.jetbrains.kotlin.resolve.DefaultIdentifierChecker
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
@@ -32,18 +29,12 @@ public object JsPlatformConfigurator : PlatformConfigurator(
         additionalCallCheckers = listOf(),
         additionalTypeCheckers = listOf(),
         additionalSymbolUsageValidators = listOf(),
-        additionalAnnotationCheckers = listOf()
+        additionalAnnotationCheckers = listOf(),
+        identifierChecker = DefaultIdentifierChecker
 ) {
     override fun configure(container: StorageComponentContainer) {
         super.configure(container)
-        container.useImpl<JsSimpleNameBacktickChecker>()
 
         container.useImpl<JsCallChecker>()
     }
 }
-
-class JsSimpleNameBacktickChecker : IdentifierChecker {
-    override fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {}
-    override fun checkDeclaration(declaration: JetDeclaration, diagnosticHolder: DiagnosticSink) {}
-}
-

@@ -98,12 +98,13 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
         additionalAnnotationCheckers = listOf(
                 RepeatableAnnotationChecker,
                 FileClassAnnotationsChecker
-        )
+        ),
+
+        identifierChecker = JvmSimpleNameBacktickChecker
 ) {
 
     override fun configure(container: StorageComponentContainer) {
         super.configure(container)
-        container.useImpl<JvmSimpleNameBacktickChecker>()
 
         container.useImpl<ReflectionAPICallChecker>()
     }
@@ -518,11 +519,9 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
     }
 }
 
-class JvmSimpleNameBacktickChecker : IdentifierChecker {
-    companion object {
-        // See The Java Virtual Machine Specification, section 4.7.9.1 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1
-        private val CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
-    }
+object JvmSimpleNameBacktickChecker : IdentifierChecker {
+     // See The Java Virtual Machine Specification, section 4.7.9.1 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1
+     private val CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
 
     override fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {
         if (identifier == null) return
