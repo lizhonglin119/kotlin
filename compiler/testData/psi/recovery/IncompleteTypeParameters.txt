@@ -17,10 +17,10 @@ JetFile: IncompleteTypeParameters.kt
         TYPE_PARAMETER_LIST
           PsiElement(LT)('<')
           TYPE_PARAMETER
-            MODIFIER_LIST
-              PsiElement(in)('in')
             PsiErrorElement:Type parameter name expected
-              <empty list>
+              PsiElement(in)('in')
+          PsiErrorElement:Missing '>'
+            <empty list>
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')

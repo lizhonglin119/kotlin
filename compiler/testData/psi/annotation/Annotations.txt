@@ -324,20 +324,18 @@ JetFile: Annotations.kt
           PsiElement(in)('in')
           PsiWhiteSpace('\n')
           PsiElement(out)('out')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace('\n')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('ref')
-        PsiWhiteSpace(' ')
+        PsiWhiteSpace('\n')
+        PsiElement(IDENTIFIER)('ref')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Missing '>'
         PsiElement(IDENTIFIER)('T')
-      PsiElement(GT)('>')
-    PsiWhiteSpace(' ')
-    CLASS_BODY
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiWhiteSpace(' ')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
