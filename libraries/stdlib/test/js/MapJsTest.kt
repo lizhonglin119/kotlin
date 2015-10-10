@@ -14,7 +14,7 @@ class ComplexMapJsTest : MapJsTest() {
         HashMap<K, Int>(3, 0.5f)
         val map = HashMap<K, Int>(createTestMap() as HashMap<K, Int>)
 
-        assertEquals(KEYS.toNormalizedList(), map.keySet().toNormalizedList())
+        assertEquals<Collection<*>>(KEYS.toNormalizedList(), map.keySet().toNormalizedList())
         assertEquals(VALUES.toNormalizedList(), map.values().toNormalizedList())
     }
     @test override fun constructors() {
