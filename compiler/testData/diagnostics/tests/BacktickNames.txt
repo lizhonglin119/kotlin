@@ -1,5 +1,13 @@
 package
 
+public val `:`: kotlin.Int = 6
+public val `;`: kotlin.Int = 1
+public val `>`: kotlin.Int = 5
+public val `[`: kotlin.Int = 2
+public val `[;]`: kotlin.Int = 10
+public val `[]`: kotlin.Int = 9
+public val `\`: kotlin.Int = 7
+public val `]`: kotlin.Int = 3
 public val ff: (kotlin.Int) -> kotlin.Unit
 public val fg: ((kotlin.Int) -> kotlin.Unit) -> kotlin.Unit
 public val fh: (kotlin.Int) -> ((kotlin.Int) -> kotlin.Unit) -> kotlin.Unit
