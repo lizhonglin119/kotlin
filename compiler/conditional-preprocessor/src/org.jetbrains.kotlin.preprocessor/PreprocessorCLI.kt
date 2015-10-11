@@ -13,23 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmName("PreprocessorCLI")
+package org.jetbrains.kotlin.preprocessor
 
-package kotlin.jvm.internal;
+import java.io.File
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+fun main(args: Array<String>) {
+    if (args.size() != 3) {
+        println("Usage: <path to sources> <output path> <profile>")
+        System.exit(1)
+    }
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface KotlinCallable {
-    @Deprecated
-    int abiVersion();
+    val sourcePath = File(args[0])
+    val targetPath = File(args[1])
 
-    int[] version() default {};
+    val profile = createProfile(args[2], targetPath)
 
-    String[] data();
-
-    String[] strings();
+    println("Preprocessing sources in $sourcePath to $targetPath with profile ${profile.name}")
+    Preprocessor().processSources(sourcePath, profile)
 }
