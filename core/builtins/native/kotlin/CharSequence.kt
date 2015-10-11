@@ -23,7 +23,7 @@ public interface CharSequence {
     /**
      * Returns the length of this character sequence.
      */
-    public fun length(): Int
+    public val size: Int
 
     /**
      * Returns the character at the specified [index] in the sequence.
