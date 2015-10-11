@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+@file:JvmName("ReflectJvm")
 package kotlin.reflect.jvm
 
-import org.jetbrains.kotlin.load.java.JvmAbi
 import java.lang.reflect.*
 import java.util.*
 import kotlin.jvm.internal.KotlinFileFacade

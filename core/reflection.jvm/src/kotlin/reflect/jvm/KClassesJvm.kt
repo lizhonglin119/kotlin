@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:JvmName("KClassesJvm")
 package kotlin.reflect.jvm
 
 import kotlin.reflect.KClass
