@@ -856,18 +856,16 @@ JetFile: ShortAnnotations.kt
         PsiElement(LPAR)('(')
         PROPERTY
           MODIFIER_LIST
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('foo')
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -879,10 +877,9 @@ JetFile: ShortAnnotations.kt
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
                 PsiElement(RPAR)(')')
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -902,10 +899,9 @@ JetFile: ShortAnnotations.kt
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
                 PsiElement(RPAR)(')')
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -920,6 +916,69 @@ JetFile: ShortAnnotations.kt
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n    ')
+        WHEN_ENTRY
+          WHEN_CONDITION_WITH_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n  ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            BINARY_EXPRESSION
+              BINARY_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(IDENTIFIER)('bar')
+                PARENTHESIZED
+                  PsiElement(LPAR)('(')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+                  PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(IDENTIFIER)('buzz')
+              PsiErrorElement:Expecting an element
+                PsiElement(LT)('<')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('T')
+            CALL_EXPRESSION
+              PsiErrorElement:Expecting an element
+                PsiElement(GT)('>')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('zoo')
+          PsiWhiteSpace(' ')
+          PROPERTY
+            PsiElement(val)('val')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(LBRACE)('{')

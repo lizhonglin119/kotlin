@@ -33,7 +33,6 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.JetNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
-import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.ALLOW_UNESCAPED_REGULAR_ANNOTATIONS;
 import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.ONLY_ESCAPED_REGULAR_ANNOTATIONS;
 import static org.jetbrains.kotlin.parsing.JetParsing.DeclarationParsingMode.LOCAL;
 
@@ -835,14 +834,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (at(LPAR)) {
             advanceAt(LPAR);
 
-            int valPos = matchTokenStreamPredicate(new FirstBefore(new At(VAL_KEYWORD), new AtSet(RPAR, LBRACE, RBRACE, SEMICOLON, EQ)));
-            if (valPos >= 0) {
-                PsiBuilder.Marker property = mark();
-                myJetParsing.parseModifierList(ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
+            PsiBuilder.Marker property = mark();
+            myJetParsing.parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS, TokenSet.create(EQ, RPAR));
+            if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
                 myJetParsing.parseProperty(true);
                 property.done(PROPERTY);
             }
             else {
+                property.rollbackTo();
                 parseExpression();
             }
 
@@ -1024,7 +1023,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private boolean parseLocalDeclaration() {
         PsiBuilder.Marker decl = mark();
         JetParsing.ModifierDetector detector = new JetParsing.ModifierDetector();
-        myJetParsing.parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
+        myJetParsing.parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS, TokenSet.EMPTY);
 
         IElementType declType = parseLocalDeclarationRest(detector.isEnumDetected());
 
@@ -1331,9 +1330,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 PsiBuilder.Marker parameter = mark();
 
                 if (!at(IN_KEYWORD)) {
-                    myJetParsing.parseModifierListWithUnescapedAnnotations(
-                            TokenSet.create(IDENTIFIER, LPAR), TokenSet.create(IN_KEYWORD, RPAR, COLON)
-                    );
+                    myJetParsing.parseModifierListWithLookForStopAt(TokenSet.create(IDENTIFIER, LPAR), TokenSet.create(IN_KEYWORD, RPAR, COLON));
                 }
 
                 if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
